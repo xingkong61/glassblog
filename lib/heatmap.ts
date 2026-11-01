@@ -28,7 +28,7 @@ export function buildHeatmap(dates: string[], weeks = 18, today = new Date()): H
 
   // 本周周日为终点，往前推 weeks*7 天，起点对齐到周一
   const end = new Date(today);
-  end.setDate(end.getDate() + (7 - ((end.getDay() || 7) % 7))); // 推到本周日
+  end.setDate(end.getDate() + ((7 - end.getDay()) % 7)); // 推到本周日（今天就是周日则不动）
   const totalDays = weeks * 7;
 
   const cells: HeatCell[] = [];
