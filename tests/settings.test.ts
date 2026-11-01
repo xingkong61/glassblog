@@ -39,12 +39,13 @@ describe("站点设置", () => {
 
 describe("密钥", () => {
   it("默认密钥无 AI 配置", () => {
-    expect(isAiConfigured(readSecrets())).toBe(false);
+    expect(isAiConfigured()).toBe(false);
   });
 
   it("配置齐 baseUrl/apiKey/model 后判定可用", () => {
     saveSecrets({ ai: { baseUrl: "https://api.example.com/v1", apiKey: "sk-x", model: "glm-4" } });
-    expect(isAiConfigured(readSecrets())).toBe(true);
+    expect(isAiConfigured()).toBe(true);
+    expect(readSecrets().ai.model).toBe("glm-4");
   });
 
   it("密码哈希可验证", () => {

@@ -99,6 +99,17 @@ export function hashPassword(plain: string): string {
   return crypto.createHash("sha256").update(`glassblog::${plain}`).digest("hex");
 }
 
-export function isAiConfigured(s: Secrets = getSecrets()): boolean {
-  return Boolean(s.ai.apiKey && s.ai.baseUrl && s.ai.model);
+// AI 运行时配置：本地用 secrets 文件；线上（secrets 不进 git）回退到环境变量
+export function aiRuntimeConfig(): { baseUrl: string; apiKey: string; model: string } {
+  const s = readSecrets().ai;
+  return {
+    baseUrl: s.baseUrl || process.env.AI_BASE_URL || "",
+    apiKey: s.apiKey || process.env.AI_API_KEY || "",
+    model: s.model || process.env.AI_MODEL || "",
+  };
+}
+
+export function isAiConfigured(): boolean {
+  const c = aiRuntimeConfig();
+  return Boolean(c.apiKey && c.baseUrl && c.model);
 }

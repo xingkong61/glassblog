@@ -2,7 +2,9 @@ import type { Metadata } from "next";
 import "./globals.css";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-import { getSiteConfig } from "@/lib/settings";
+import MusicWidget from "@/components/MusicWidget";
+import AIAssistant from "@/components/AIAssistant";
+import { getSiteConfig, isAiConfigured } from "@/lib/settings";
 
 // 系统字体栈：避免构建期拉取 Google Fonts（国内网络不稳定）
 const fontStack =
@@ -51,6 +53,14 @@ export default function RootLayout({
         <Navbar siteName={site.siteName} />
         <main className="mx-auto w-full max-w-6xl px-4 pb-16 pt-6 sm:px-6">{children}</main>
         <Footer />
+        {site.music.enabled && site.music.playlist.length > 0 ? (
+          <MusicWidget playlist={site.music.playlist} />
+        ) : null}
+        <AIAssistant
+          name={site.ai.name}
+          greeting={site.ai.greeting}
+          enabled={site.ai.enabled && isAiConfigured()}
+        />
       </body>
     </html>
   );

@@ -209,7 +209,71 @@ export default function SettingsPage() {
           </label>
         </Card>
 
-        <Card title="AI 猫猫助理" desc="填任意 OpenAI 兼容接口（智谱/通义/DeepSeek/自建中转均可）。三项都填并勾选启用后，前台出现助理">
+        <Card title="网易云 BGM 挂件" desc="填网易云歌曲页地址栏里的那串数字 ID。启用后前台左下角出现播放器">
+          <label className="flex cursor-pointer items-center gap-2 text-sm text-slate-600 dark:text-slate-300">
+            <input
+              type="checkbox"
+              checked={site.music.enabled}
+              onChange={(e) => patch({ music: { ...site.music, enabled: e.target.checked } })}
+              className="h-4 w-4 accent-indigo-500"
+            />
+            启用 BGM 挂件
+          </label>
+          <div className="flex flex-col gap-2">
+            {site.music.playlist.map((item, i) => (
+              <div key={i} className="flex flex-wrap items-center gap-2">
+                <input
+                  value={item.id}
+                  onChange={(e) => {
+                    const playlist = [...site.music.playlist];
+                    playlist[i] = { ...item, id: e.target.value.replace(/\D/g, "") };
+                    patch({ music: { ...site.music, playlist } });
+                  }}
+                  placeholder="歌曲ID"
+                  className={cx(inputCls, "w-32 font-mono")}
+                />
+                <input
+                  value={item.title}
+                  onChange={(e) => {
+                    const playlist = [...site.music.playlist];
+                    playlist[i] = { ...item, title: e.target.value };
+                    patch({ music: { ...site.music, playlist } });
+                  }}
+                  placeholder="歌名"
+                  className={cx(inputCls, "w-36")}
+                />
+                <input
+                  value={item.artist}
+                  onChange={(e) => {
+                    const playlist = [...site.music.playlist];
+                    playlist[i] = { ...item, artist: e.target.value };
+                    patch({ music: { ...site.music, playlist } });
+                  }}
+                  placeholder="歌手"
+                  className={cx(inputCls, "w-28")}
+                />
+                <button
+                  onClick={() =>
+                    patch({ music: { ...site.music, playlist: site.music.playlist.filter((_, j) => j !== i) } })
+                  }
+                  className="rounded-lg bg-rose-500/10 px-2.5 py-1.5 text-xs text-rose-500 transition hover:bg-rose-500/20"
+                >
+                  移除
+                </button>
+              </div>
+            ))}
+            <button
+              onClick={() =>
+                patch({ music: { ...site.music, playlist: [...site.music.playlist, { id: "", title: "", artist: "" }] } })
+              }
+              className="self-start rounded-xl bg-cyan-500/10 px-3 py-1.5 text-xs text-cyan-600 transition hover:bg-cyan-500/20 dark:text-cyan-300"
+            >
+              + 添加一首
+            </button>
+          </div>
+        </Card>
+
+        <Card title="AI 猫猫助理" desc="填任意 OpenAI 兼容接口（智谱/通义/DeepSeek/自建中转均可）。三项都填并勾选启用后，前台出现助理。线上部署时也可以用 Vercel 环境变量 AI_BASE_URL / AI_API_KEY / AI_MODEL 替代">
           <label className="flex cursor-pointer items-center gap-2 text-sm text-slate-600 dark:text-slate-300">
             <input
               type="checkbox"
