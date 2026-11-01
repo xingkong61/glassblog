@@ -28,6 +28,7 @@ export const DEFAULT_SITE: SiteConfig = {
   social: { github: "", bilibili: "", email: "", xiaohongshu: "" },
   icp: "",
   footerText: "用玻璃之心，写透明之文。",
+  analytics: "",
   levelSystem: true,
   music: { enabled: false, playlist: [] },
   ai: {

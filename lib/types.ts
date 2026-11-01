@@ -46,6 +46,7 @@ export interface SiteConfig {
   };
   icp: string;
   footerText: string;
+  analytics: string; // 统计代码 JS 体（不带 <script> 标签），如百度统计/umami 片段
   levelSystem: boolean;
   music: { enabled: boolean; playlist: MusicItem[] };
   ai: { enabled: boolean; name: string; prompt: string; greeting: string };

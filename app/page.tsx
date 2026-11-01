@@ -1,5 +1,6 @@
 import Link from "next/link";
 import PostCard from "@/components/PostCard";
+import AdSlot from "@/components/AdSlot";
 import { getStats, listPosts } from "@/lib/content";
 import { getLevel } from "@/lib/level";
 import { getSiteConfig } from "@/lib/settings";
@@ -108,6 +109,8 @@ export default async function HomePage() {
             浏览全部文章 →
           </Link>
         </div>
+
+        <AdSlot code={site.ads.sidebar} />
       </aside>
     </div>
   );

@@ -2,7 +2,9 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import MarkdownView from "@/components/MarkdownView";
+import AdSlot from "@/components/AdSlot";
 import { getAdjacentPosts, getPost, listPosts } from "@/lib/content";
+import { getSiteConfig } from "@/lib/settings";
 
 interface Props {
   params: Promise<{ slug: string }>;
@@ -73,6 +75,8 @@ export default async function PostPage({ params }: Props) {
         <hr className="my-6 border-slate-200/60 dark:border-slate-600/40" />
 
         <MarkdownView content={post.content} />
+
+        <AdSlot code={getSiteConfig().ads.inArticle} className="mt-8" />
       </article>
 
       <nav className="mt-6 grid gap-3 sm:grid-cols-2">

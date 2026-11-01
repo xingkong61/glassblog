@@ -1,36 +1,45 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# GlassBlog 🪟
 
-## Getting Started
+高颜值毛玻璃风格个人博客系统，**原创实现、代码 100% 归你、可自由商用**（MIT）。
 
-First, run the development server:
+前台 Next.js 静态化，后台本地运行，内容即 Markdown 文件——写作、发说说、传图床、调设置全在浏览器里完成，写完双击发布上线。
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+## 快速开始
+
+```
+双击 写作.bat   → 自动装依赖、起服务、打开后台（默认密码 glassblog）
+双击 发布.bat   → 推送 GitHub，Vercel 自动构建上线
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+详细部署步骤（GitHub + Vercel + 自定义域名 + 排错）：见 **[docs/部署指南.md](docs/部署指南.md)**。
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## 功能
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- 🪟 毛玻璃设计语言：半透明卡片 + 极光光斑背景，浅色/深色双主题，移动端适配
+- ✍️ Markdown 写作：分屏实时预览、草稿管理、一键发布
+- 🖼️ 本地图床：上传自动压缩为 webp（长边 ≤1920），零第三方依赖
+- 💭 说说时间轴 + 写作贡献度热力图
+- 🏅 等级系统（按内容量计算，可关闭）
+- 🎵 网易云 BGM 挂件（官方外链播放器，零注册）
+- 🐱 AI 猫猫助理：任意 OpenAI 兼容接口（智谱/通义/DeepSeek…），不填 key 自动隐藏
+- 💰 商用就绪：SEO（sitemap/RSS/OG/JSON-LD 就绪位）、广告位（侧栏+文章底部）、统计代码接入、ICP 备案号位
+- 🔒 线上安全：`ADMIN_MODE=cloud` 时后台与所有写接口 404；密钥文件不进 git
 
-## Learn More
+## 技术栈
 
-To learn more about Next.js, take a look at the following resources:
+Next.js 15 · TypeScript · Tailwind CSS v4 · gray-matter · react-markdown · sharp · vitest（26 个单测）
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## 目录速览
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+```
+app/            前台页面 + admin 后台 + api 接口
+components/     前台组件（Navbar/PostCard/挂件…）
+lib/            内容解析/设置/发布/等级/热力图
+content/        你的文章与说说（Markdown，进 git）
+config/         site.json 站点配置；secrets.local.json 密钥（不进 git）
+public/uploads/ 图床图片（进 git，随部署带上）
+```
 
-## Deploy on Vercel
+## 许可证
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+MIT —— 随便用，包括商用。保留版权声明即可。

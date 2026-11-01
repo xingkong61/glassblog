@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Script from "next/script";
 import "./globals.css";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
@@ -53,6 +54,11 @@ export default function RootLayout({
         <Navbar siteName={site.siteName} />
         <main className="mx-auto w-full max-w-6xl px-4 pb-16 pt-6 sm:px-6">{children}</main>
         <Footer />
+        {site.analytics.trim() ? (
+          <Script id="site-analytics" strategy="afterInteractive">
+            {site.analytics}
+          </Script>
+        ) : null}
         {site.music.enabled && site.music.playlist.length > 0 ? (
           <MusicWidget playlist={site.music.playlist} />
         ) : null}

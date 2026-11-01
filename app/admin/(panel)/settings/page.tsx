@@ -197,6 +197,38 @@ export default function SettingsPage() {
           </div>
         </Card>
 
+        <Card title="商用配置" desc="统计与广告：粘贴代码片段即生效，留空则完全不渲染">
+          <label className="text-xs text-slate-400">
+            统计代码（粘贴 JS 体，不带 &lt;script&gt; 标签；百度统计/umami 等）
+            <textarea
+              value={site.analytics}
+              onChange={(e) => patch({ analytics: e.target.value })}
+              rows={3}
+              placeholder="var _hmt = _hmt || []; (function() { ... })();"
+              className={cx(inputCls, "mt-1 resize-y font-mono")}
+            />
+          </label>
+          <label className="text-xs text-slate-400">
+            侧栏广告位（HTML/iframe 片段）
+            <textarea
+              value={site.ads.sidebar}
+              onChange={(e) => patch({ ads: { ...site.ads, sidebar: e.target.value } })}
+              rows={2}
+              placeholder='<a href="..."><img src="..." /></a>'
+              className={cx(inputCls, "mt-1 resize-y font-mono")}
+            />
+          </label>
+          <label className="text-xs text-slate-400">
+            文章底部广告位（HTML/iframe 片段；纯 JS 脚本建议用联盟提供的 iframe 版）
+            <textarea
+              value={site.ads.inArticle}
+              onChange={(e) => patch({ ads: { ...site.ads, inArticle: e.target.value } })}
+              rows={2}
+              className={cx(inputCls, "mt-1 resize-y font-mono")}
+            />
+          </label>
+        </Card>
+
         <Card title="等级系统" desc="首页名片的等级与经验条；不想展示可整体关闭">
           <label className="flex cursor-pointer items-center gap-2 text-sm text-slate-600 dark:text-slate-300">
             <input
