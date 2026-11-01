@@ -10,6 +10,23 @@ export default function AdminDashboard() {
   const [moments, setMoments] = useState<MomentMeta[]>([]);
   const [aiConfigured, setAiConfigured] = useState(false);
   const [loaded, setLoaded] = useState(false);
+  const [publishing, setPublishing] = useState(false);
+  const [publishMsg, setPublishMsg] = useState("");
+
+  async function publish() {
+    setPublishing(true);
+    setPublishMsg("");
+    try {
+      const res = await api<{ ok: boolean; message: string; detail?: string }>("/api/publish", {
+        method: "POST",
+      });
+      setPublishMsg(res.detail ? `${res.message}\n${res.detail}` : res.message);
+    } catch (err) {
+      setPublishMsg(err instanceof Error ? err.message : "发布失败");
+    } finally {
+      setPublishing(false);
+    }
+  }
 
   useEffect(() => {
     Promise.all([
@@ -70,9 +87,19 @@ export default function AdminDashboard() {
           <h2 className="text-sm font-bold text-slate-700 dark:text-slate-200">发布到线上</h2>
           <p className="mt-2 text-xs leading-relaxed text-slate-500 dark:text-slate-400">
             双击项目里的 <code className="rounded bg-indigo-500/10 px-1 py-0.5 text-indigo-500">发布.bat</code>，
-            源码会推送到 GitHub 并触发 Vercel 自动构建。
+            或直接点下面按钮。源码推送 GitHub 后 Vercel 自动构建。
             首次使用请先看 <code className="rounded bg-indigo-500/10 px-1 py-0.5 text-indigo-500">docs/部署指南.md</code>。
           </p>
+          <div className="mt-3 flex items-center gap-2">
+            <button
+              onClick={publish}
+              disabled={publishing}
+              className="rounded-xl bg-emerald-500/15 px-4 py-2 text-xs font-semibold text-emerald-600 transition hover:bg-emerald-500/25 disabled:opacity-50 dark:text-emerald-300"
+            >
+              {publishing ? "推送中…" : "🚀 发布到线上"}
+            </button>
+          </div>
+          {publishMsg ? <p className="mt-2 whitespace-pre-wrap text-xs text-slate-500 dark:text-slate-400">{publishMsg}</p> : null}
           <div className="mt-3 text-xs">
             <span className="text-slate-400">AI 猫猫助理：</span>
             {aiConfigured ? (

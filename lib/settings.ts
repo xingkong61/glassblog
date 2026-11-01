@@ -20,6 +20,7 @@ function secretsPath(): string {
 
 export const DEFAULT_SITE: SiteConfig = {
   siteName: "玻璃小栈",
+  siteUrl: "",
   subtitle: "一块会发光的毛玻璃",
   description: "记录技术、生活与灵感的个人博客",
   author: "博主",

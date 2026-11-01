@@ -11,12 +11,20 @@ const fontStack =
 export async function generateMetadata(): Promise<Metadata> {
   const site = getSiteConfig();
   return {
+    metadataBase: site.siteUrl ? new URL(site.siteUrl) : undefined,
     title: {
       default: `${site.siteName} · ${site.subtitle}`,
       template: `%s · ${site.siteName}`,
     },
     description: site.description,
     icons: { icon: "/icon.svg" },
+    openGraph: {
+      type: "website",
+      siteName: site.siteName,
+      title: `${site.siteName} · ${site.subtitle}`,
+      description: site.description,
+      images: [site.avatar],
+    },
   };
 }
 

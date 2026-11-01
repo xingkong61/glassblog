@@ -16,7 +16,18 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
   const post = getPost(slug, { includeDrafts: process.env.NODE_ENV !== "production" });
   if (!post) return { title: "文章不存在" };
-  return { title: post.title, description: post.summary };
+  return {
+    title: post.title,
+    description: post.summary,
+    openGraph: {
+      type: "article",
+      title: post.title,
+      description: post.summary,
+      publishedTime: post.date,
+      tags: post.tags,
+      images: post.cover ? [post.cover] : undefined,
+    },
+  };
 }
 
 export default async function PostPage({ params }: Props) {

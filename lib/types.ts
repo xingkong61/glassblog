@@ -33,6 +33,7 @@ export interface MusicItem {
 
 export interface SiteConfig {
   siteName: string;
+  siteUrl: string; // 线上地址（https://xxx），用于 SEO/sitemap/RSS；留空则不生成绝对链接
   subtitle: string;
   description: string;
   author: string;
