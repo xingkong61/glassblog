@@ -1,26 +1,345 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+@custom-variant dark (&:where(.dark, .dark *));
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
+/* ---------- 基础 ---------- */
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html {
+  scroll-behavior: smooth;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  min-height: 100vh;
+  color: #334155;
+  background-attachment: fixed;
+  background-color: #f2f6ff;
+  background-image:
+    radial-gradient(1100px 560px at 8% -8%, rgba(165, 180, 252, 0.45), transparent 60%),
+    radial-gradient(900px 480px at 96% 2%, rgba(103, 232, 249, 0.38), transparent 55%),
+    radial-gradient(1000px 680px at 50% 108%, rgba(196, 181, 253, 0.4), transparent 62%),
+    linear-gradient(180deg, #f5f8ff 0%, #ecf2ff 100%);
+}
+
+.dark body {
+  color: #cbd5e1;
+  background-color: #0b1020;
+  background-image:
+    radial-gradient(1100px 560px at 8% -8%, rgba(99, 102, 241, 0.22), transparent 60%),
+    radial-gradient(900px 480px at 96% 2%, rgba(34, 211, 238, 0.14), transparent 55%),
+    radial-gradient(1000px 680px at 50% 108%, rgba(168, 85, 247, 0.16), transparent 62%),
+    linear-gradient(180deg, #0b1020 0%, #0d1226 100%);
+}
+
+::selection {
+  background: rgba(129, 140, 248, 0.35);
+}
+
+/* ---------- 毛玻璃卡片 ---------- */
+
+.glass {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.66), rgba(255, 255, 255, 0.34));
+  -webkit-backdrop-filter: blur(18px) saturate(160%);
+  backdrop-filter: blur(18px) saturate(160%);
+  border: 1px solid rgba(255, 255, 255, 0.7);
+  border-radius: 1.25rem;
+  box-shadow:
+    0 8px 32px rgba(31, 38, 135, 0.12),
+    inset 0 1px 0 rgba(255, 255, 255, 0.7);
+}
+
+.dark .glass {
+  background: linear-gradient(135deg, rgba(30, 41, 59, 0.6), rgba(15, 23, 42, 0.35));
+  border: 1px solid rgba(148, 163, 184, 0.16);
+  box-shadow:
+    0 8px 32px rgba(0, 0, 0, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.05);
+}
+
+.glass-hover {
+  transition:
+    transform 0.25s ease,
+    box-shadow 0.25s ease;
+}
+
+.glass-hover:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 16px 44px rgba(31, 38, 135, 0.2);
+}
+
+.dark .glass-hover:hover {
+  box-shadow: 0 16px 44px rgba(0, 0, 0, 0.55);
+}
+
+/* ---------- 背景光斑 ---------- */
+
+.aurora {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.aurora span {
+  position: absolute;
+  border-radius: 9999px;
+  filter: blur(90px);
+  opacity: 0.5;
+  animation: aurora-float 20s ease-in-out infinite;
+}
+
+.aurora span:nth-child(1) {
+  width: 420px;
+  height: 420px;
+  background: #818cf8;
+  top: -100px;
+  left: -80px;
+}
+
+.aurora span:nth-child(2) {
+  width: 360px;
+  height: 360px;
+  background: #22d3ee;
+  top: 10%;
+  right: -100px;
+  animation-delay: -6s;
+}
+
+.aurora span:nth-child(3) {
+  width: 460px;
+  height: 460px;
+  background: #f0abfc;
+  bottom: -140px;
+  left: 30%;
+  animation-delay: -12s;
+}
+
+.dark .aurora span {
+  opacity: 0.22;
+}
+
+@keyframes aurora-float {
+  0%,
+  100% {
+    transform: translate(0, 0) scale(1);
+  }
+  50% {
+    transform: translate(44px, 30px) scale(1.08);
+  }
+}
+
+/* ---------- 正文排版（无插件手搓 prose） ---------- */
+
+.prose-glass {
+  line-height: 1.85;
+  font-size: 1rem;
+  word-break: break-word;
+}
+
+.prose-glass > *:first-child {
+  margin-top: 0;
+}
+
+.prose-glass h1,
+.prose-glass h2,
+.prose-glass h3,
+.prose-glass h4 {
+  color: #1e293b;
+  font-weight: 700;
+  line-height: 1.4;
+  margin: 1.8em 0 0.7em;
+}
+
+.dark .prose-glass h1,
+.dark .prose-glass h2,
+.dark .prose-glass h3,
+.dark .prose-glass h4 {
+  color: #e2e8f0;
+}
+
+.prose-glass h1 {
+  font-size: 1.6em;
+}
+
+.prose-glass h2 {
+  font-size: 1.35em;
+  padding-left: 0.6em;
+  border-left: 4px solid #818cf8;
+}
+
+.prose-glass h3 {
+  font-size: 1.15em;
+}
+
+.prose-glass p {
+  margin: 0.9em 0;
+}
+
+.prose-glass a {
+  color: #4f46e5;
+  text-decoration: underline;
+  text-decoration-color: rgba(79, 70, 229, 0.35);
+  text-underline-offset: 3px;
+}
+
+.dark .prose-glass a {
+  color: #a5b4fc;
+}
+
+.prose-glass ul,
+.prose-glass ol {
+  margin: 0.9em 0;
+  padding-left: 1.6em;
+}
+
+.prose-glass ul {
+  list-style: disc;
+}
+
+.prose-glass ol {
+  list-style: decimal;
+}
+
+.prose-glass li {
+  margin: 0.35em 0;
+}
+
+.prose-glass blockquote {
+  margin: 1.1em 0;
+  padding: 0.7em 1.1em;
+  border-left: 4px solid rgba(129, 140, 248, 0.6);
+  background: rgba(129, 140, 248, 0.08);
+  border-radius: 0 0.6rem 0.6rem 0;
+  color: #475569;
+}
+
+.dark .prose-glass blockquote {
+  color: #94a3b8;
+  background: rgba(129, 140, 248, 0.1);
+}
+
+.prose-glass code {
+  font-family: ui-monospace, SFMono-Regular, Consolas, "Courier New", monospace;
+  font-size: 0.88em;
+  background: rgba(99, 102, 241, 0.1);
+  padding: 0.15em 0.4em;
+  border-radius: 0.35rem;
+  color: #4338ca;
+}
+
+.dark .prose-glass code {
+  background: rgba(129, 140, 248, 0.15);
+  color: #c7d2fe;
+}
+
+.prose-glass pre {
+  margin: 1.2em 0;
+  padding: 1em 1.2em;
+  border-radius: 0.9rem;
+  overflow-x: auto;
+  font-size: 0.88em;
+  line-height: 1.7;
+  background: #0f172a;
+  border: 1px solid rgba(148, 163, 184, 0.2);
+}
+
+.prose-glass pre code {
+  background: transparent;
+  padding: 0;
+  color: #e2e8f0;
+  font-size: 1em;
+}
+
+.prose-glass img {
+  max-width: 100%;
+  border-radius: 0.9rem;
+  margin: 1.1em auto;
+}
+
+.prose-glass table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1.1em 0;
+  font-size: 0.94em;
+}
+
+.prose-glass th,
+.prose-glass td {
+  border: 1px solid rgba(148, 163, 184, 0.35);
+  padding: 0.5em 0.8em;
+  text-align: left;
+}
+
+.prose-glass th {
+  background: rgba(129, 140, 248, 0.1);
+}
+
+.prose-glass hr {
+  border: none;
+  height: 1px;
+  background: rgba(148, 163, 184, 0.4);
+  margin: 2em 0;
+}
+
+/* ---------- 代码高亮（代码块固定深底，单套 token 配色即可） ---------- */
+
+.hljs-comment,
+.hljs-quote {
+  color: #94a3b8;
+  font-style: italic;
+}
+
+.hljs-keyword,
+.hljs-selector-tag,
+.hljs-literal,
+.hljs-doctag {
+  color: #c678dd;
+}
+
+.hljs-string,
+.hljs-regexp,
+.hljs-addition {
+  color: #98c379;
+}
+
+.hljs-number,
+.hljs-built_in,
+.hljs-attr {
+  color: #d19a66;
+}
+
+.hljs-title,
+.hljs-function .hljs-title,
+.hljs-title.function_ {
+  color: #61afef;
+}
+
+.hljs-variable,
+.hljs-deletion {
+  color: #e06c75;
+}
+
+/* ---------- 其他 ---------- */
+
+.clamp-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.clamp-3 {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .aurora span {
+    animation: none;
+  }
+  html {
+    scroll-behavior: auto;
+  }
 }

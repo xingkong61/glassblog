@@ -1,0 +1,30 @@
+{
+  "siteName": "玻璃小栈",
+  "subtitle": "一块会发光的毛玻璃",
+  "description": "记录技术、生活与灵感的个人博客",
+  "author": "博主",
+  "avatar": "/avatar.svg",
+  "social": {
+    "github": "",
+    "bilibili": "",
+    "email": "",
+    "xiaohongshu": ""
+  },
+  "icp": "",
+  "footerText": "用玻璃之心，写透明之文。",
+  "levelSystem": true,
+  "music": {
+    "enabled": false,
+    "playlist": []
+  },
+  "ai": {
+    "enabled": false,
+    "name": "小玻",
+    "prompt": "你是博客里的猫咪助理，说话简短可爱，偶尔用喵结尾。",
+    "greeting": "喵？找我有什么事~"
+  },
+  "ads": {
+    "inArticle": "",
+    "sidebar": ""
+  }
+}

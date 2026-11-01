@@ -39,3 +39,6 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# 密钥与本地私有配置（绝不进 git）
+/config/secrets.local.json
