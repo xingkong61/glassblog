@@ -40,10 +40,19 @@ export function publishChanges(dryRun = false): PublishResult {
     execSync("git add -A", { cwd: root, stdio: "ignore" });
     execSync(`git commit -m "publish: ${new Date().toISOString()}"`, { cwd: root, stdio: "ignore" });
     const branch = run("git rev-parse --abbrev-ref HEAD").trim() || "main";
-    execSync(`git push origin ${branch}`, { cwd: root, stdio: "ignore" });
+    try {
+      execSync(`git push origin ${branch}`, { cwd: root, stdio: "ignore" });
+    } catch {
+      // 直连失败 → 走本机系统代理重试（与 scripts/publish.mjs 的兜底一致）
+      execSync(`git push origin ${branch}`, {
+        cwd: root,
+        stdio: "ignore",
+        env: { ...process.env, HTTPS_PROXY: "http://127.0.0.1:11129", HTTP_PROXY: "http://127.0.0.1:11129" },
+      });
+    }
     return { ok: true, message: "已推送到 GitHub，Vercel 将自动构建上线（约 1-2 分钟）。" };
   } catch (err) {
     const detail = err instanceof Error ? err.message : String(err);
-    return { ok: false, message: "推送失败（检查网络 / GitHub 密钥）", detail };
+    return { ok: false, message: "推送失败（检查网络 / 代理是否开启 / GitHub 密钥）", detail };
   }
 }
