@@ -29,10 +29,15 @@ const TITLES = [
 // 各级经验门槛（累计值，原创设计：前松后紧）
 const THRESHOLDS = [0, 50, 150, 320, 560, 900, 1400, 2100];
 
+function clamp(n: unknown): number {
+  const v = typeof n === "number" && Number.isFinite(n) ? n : 0;
+  return Math.max(0, Math.floor(v));
+}
+
 export function calcExp(stats: ContentStats): number {
-  const posts = Math.max(0, Math.floor(stats.posts));
-  const moments = Math.max(0, Math.floor(stats.moments));
-  const words = Math.max(0, Math.floor(stats.words));
+  const posts = clamp(stats.posts);
+  const moments = clamp(stats.moments);
+  const words = clamp(stats.words);
   return posts * 50 + moments * 10 + Math.floor(words / 300);
 }
 

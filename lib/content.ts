@@ -5,9 +5,22 @@ import matter from "gray-matter";
 import { formatDate } from "./format";
 import type { MomentFull, MomentMeta, PostFull, PostMeta } from "./types";
 
-const POSTS_DIR = path.join(process.cwd(), "content", "posts");
-const MOMENTS_DIR = path.join(process.cwd(), "content", "moments");
-const ABOUT_FILE = path.join(process.cwd(), "content", "about.md");
+// 根目录可被环境变量覆盖（测试隔离用），默认取进程工作目录
+export function getRoot(): string {
+  return process.env.GLASSBLOG_ROOT ?? process.cwd();
+}
+
+function postsDir(): string {
+  return path.join(getRoot(), "content", "posts");
+}
+
+function momentsDir(): string {
+  return path.join(getRoot(), "content", "moments");
+}
+
+function aboutFile(): string {
+  return path.join(getRoot(), "content", "about.md");
+}
 
 export function isSafeSlug(slug: string): boolean {
   return (
@@ -94,8 +107,8 @@ function listMarkdownFiles(dir: string): string[] {
 
 export function listPosts(opts: { includeDrafts?: boolean } = {}): PostMeta[] {
   const posts: PostMeta[] = [];
-  for (const file of listMarkdownFiles(POSTS_DIR)) {
-    const doc = readDoc(POSTS_DIR, file);
+  for (const file of listMarkdownFiles(postsDir())) {
+    const doc = readDoc(postsDir(), file);
     if (!doc) continue;
     const meta = toPostMeta(doc);
     if (meta.draft && !opts.includeDrafts) continue;
@@ -107,8 +120,8 @@ export function listPosts(opts: { includeDrafts?: boolean } = {}): PostMeta[] {
 export function getPost(slug: string, opts: { includeDrafts?: boolean } = {}): PostFull | null {
   if (!isSafeSlug(slug)) return null;
   const file = `${slug}.md`;
-  if (!listMarkdownFiles(POSTS_DIR).some((f) => f.toLowerCase() === file.toLowerCase())) return null;
-  const doc = readDoc(POSTS_DIR, file);
+  if (!listMarkdownFiles(postsDir()).some((f) => f.toLowerCase() === file.toLowerCase())) return null;
+  const doc = readDoc(postsDir(), file);
   if (!doc) return null;
   const meta = toPostMeta(doc);
   if (meta.draft && !opts.includeDrafts) return null;
@@ -162,17 +175,27 @@ function toMomentMeta(doc: RawDoc): MomentMeta {
 
 export function listMoments(): MomentMeta[] {
   const list: MomentMeta[] = [];
-  for (const file of listMarkdownFiles(MOMENTS_DIR)) {
-    const doc = readDoc(MOMENTS_DIR, file);
+  for (const file of listMarkdownFiles(momentsDir())) {
+    const doc = readDoc(momentsDir(), file);
     if (!doc) continue;
     list.push(toMomentMeta(doc));
   }
   return list.sort((a, b) => (a.date < b.date ? 1 : -1));
 }
 
+export function listMomentsFull(): MomentFull[] {
+  const list: MomentFull[] = [];
+  for (const file of listMarkdownFiles(momentsDir())) {
+    const doc = readDoc(momentsDir(), file);
+    if (!doc) continue;
+    list.push({ ...toMomentMeta(doc), content: doc.content });
+  }
+  return list.sort((a, b) => (a.date < b.date ? 1 : -1));
+}
+
 export function getMoment(slug: string): MomentFull | null {
   if (!isSafeSlug(slug)) return null;
-  const doc = readDoc(MOMENTS_DIR, `${slug}.md`);
+  const doc = readDoc(momentsDir(), `${slug}.md`);
   if (!doc) return null;
   return { ...toMomentMeta(doc), content: doc.content };
 }
@@ -181,7 +204,7 @@ export function getMoment(slug: string): MomentFull | null {
 
 export function getAboutMarkdown(): string {
   try {
-    return matter(fs.readFileSync(ABOUT_FILE, "utf8")).content;
+    return matter(fs.readFileSync(aboutFile(), "utf8")).content;
   } catch {
     return "关于页面尚未填写。到本地后台「设置」里写点什么吧。";
   }

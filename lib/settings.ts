@@ -5,8 +5,18 @@ import crypto from "node:crypto";
 import path from "node:path";
 import type { Secrets, SiteConfig } from "./types";
 
-const CONFIG_PATH = path.join(process.cwd(), "config", "site.json");
-const SECRETS_PATH = path.join(process.cwd(), "config", "secrets.local.json");
+// 根目录可被环境变量覆盖（测试隔离用），默认取进程工作目录
+function getRoot(): string {
+  return process.env.GLASSBLOG_ROOT ?? process.cwd();
+}
+
+function configPath(): string {
+  return path.join(getRoot(), "config", "site.json");
+}
+
+function secretsPath(): string {
+  return path.join(getRoot(), "config", "secrets.local.json");
+}
 
 export const DEFAULT_SITE: SiteConfig = {
   siteName: "玻璃小栈",
@@ -47,35 +57,40 @@ function deepMerge<T>(base: T, patch: Record<string, unknown>): T {
   return out as T;
 }
 
-export const getSiteConfig = cache((): SiteConfig => {
+// 读取口有两个：readSiteConfig（不缓存，写路径/测试用）与 getSiteConfig（请求级缓存，渲染用）
+export function readSiteConfig(): SiteConfig {
   try {
-    const raw = JSON.parse(fs.readFileSync(CONFIG_PATH, "utf8")) as Record<string, unknown>;
+    const raw = JSON.parse(fs.readFileSync(configPath(), "utf8")) as Record<string, unknown>;
     return deepMerge(DEFAULT_SITE, raw);
   } catch {
     return DEFAULT_SITE;
   }
-});
+}
+
+export const getSiteConfig = cache(readSiteConfig);
 
 export function saveSiteConfig(patch: Record<string, unknown>): SiteConfig {
-  const merged = deepMerge(getSiteConfig(), patch);
-  fs.mkdirSync(path.dirname(CONFIG_PATH), { recursive: true });
-  fs.writeFileSync(CONFIG_PATH, JSON.stringify(merged, null, 2) + "\n", "utf8");
+  const merged = deepMerge(readSiteConfig(), patch);
+  fs.mkdirSync(path.dirname(configPath()), { recursive: true });
+  fs.writeFileSync(configPath(), JSON.stringify(merged, null, 2) + "\n", "utf8");
   return merged;
 }
 
-export const getSecrets = cache((): Secrets => {
+export function readSecrets(): Secrets {
   try {
-    const raw = JSON.parse(fs.readFileSync(SECRETS_PATH, "utf8")) as Record<string, unknown>;
+    const raw = JSON.parse(fs.readFileSync(secretsPath(), "utf8")) as Record<string, unknown>;
     return deepMerge(DEFAULT_SECRETS, raw);
   } catch {
     return DEFAULT_SECRETS;
   }
-});
+}
+
+export const getSecrets = cache(readSecrets);
 
 export function saveSecrets(patch: Record<string, unknown>): Secrets {
-  const merged = deepMerge(getSecrets(), patch);
-  fs.mkdirSync(path.dirname(SECRETS_PATH), { recursive: true });
-  fs.writeFileSync(SECRETS_PATH, JSON.stringify(merged, null, 2) + "\n", "utf8");
+  const merged = deepMerge(readSecrets(), patch);
+  fs.mkdirSync(path.dirname(secretsPath()), { recursive: true });
+  fs.writeFileSync(secretsPath(), JSON.stringify(merged, null, 2) + "\n", "utf8");
   return merged;
 }
 

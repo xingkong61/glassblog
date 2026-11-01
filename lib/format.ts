@@ -15,3 +15,12 @@ export function formatDateTime(d: string | Date): string {
 export function cx(...parts: Array<string | false | null | undefined>): string {
   return parts.filter(Boolean).join(" ");
 }
+
+// 文件别名清洗：空白转连字符、剔除文件系统/URL 非法字符
+export function sanitizeSlug(input: string): string {
+  return input
+    .trim()
+    .replace(/\s+/g, "-")
+    .replace(/[\\/:*?"<>|#%&{}$!'@+`=^~]/g, "")
+    .slice(0, 80);
+}
