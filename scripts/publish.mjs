@@ -19,15 +19,30 @@ try {
     process.exit(1);
   }
 
+  const branch = execSync("git rev-parse --abbrev-ref HEAD", { encoding: "utf8" }).trim() || "main";
+
+  // 1) 工作区有改动 → 先提交
   const status = execSync("git status --porcelain", { encoding: "utf8" }).trim();
-  if (!status) {
+  if (status) {
+    run("git add -A");
+    run(`git commit -m "publish: ${new Date().toISOString()}"`);
+  }
+
+  // 2) 没有未推送的 commit（且刚才也没提交）→ 真的无事可做
+  //    注意：只看工作区会漏掉"已手动 commit 但没 push"的情况，必须比对远程
+  let unpushed = "";
+  try {
+    unpushed = execSync(`git rev-list --count origin/${branch}..HEAD`, { encoding: "utf8" }).trim();
+  } catch {
+    unpushed = "1"; // 远程分支还不存在（首次推送），按有未推送处理
+  }
+  if (!status && (unpushed === "0" || unpushed === "")) {
     console.log("\n✅ 没有需要发布的改动，线上已是最新。");
     process.exit(0);
   }
-
-  run("git add -A");
-  run(`git commit -m "publish: ${new Date().toISOString()}"`);
-  const branch = execSync("git rev-parse --abbrev-ref HEAD", { encoding: "utf8" }).trim() || "main";
+  if (!status && unpushed !== "0") {
+    console.log(`\n[提示] 工作区无改动，但有 ${unpushed} 个已提交未推送的 commit，继续推送…`);
+  }
 
   try {
     run(`git push origin ${branch}`);

@@ -39,17 +39,31 @@ export function publishChanges(dryRun = false): PublishResult {
     return { ok: false, message: "这里不是 git 仓库（或 git 不可用）" };
   }
 
-  if (!status) {
+  const branch = run("git rev-parse --abbrev-ref HEAD").trim() || "main";
+
+  // 有未推送的 commit（例如先手动 commit 再点发布）也必须推
+  let unpushed = "1";
+  try {
+    unpushed = run(`git rev-list --count origin/${branch}..HEAD`).trim() || "0";
+  } catch {
+    unpushed = "1"; // 远程分支不存在（首次推送）
+  }
+
+  if (!status && unpushed === "0") {
     return { ok: true, message: "没有新改动，线上已是最新。" };
   }
   if (dryRun) {
-    return { ok: true, message: "dry-run 预览（不会真的推送）：", detail: status };
+    const parts = [];
+    if (status) parts.push("工作区改动：\n" + status);
+    if (unpushed !== "0") parts.push(`已提交未推送的 commit：${unpushed} 个`);
+    return { ok: true, message: "dry-run 预览（不会真的推送）：", detail: parts.join("\n\n") };
   }
 
   try {
-    execSync("git add -A", { cwd: root, stdio: "ignore" });
-    execSync(`git commit -m "publish: ${new Date().toISOString()}"`, { cwd: root, stdio: "ignore" });
-    const branch = run("git rev-parse --abbrev-ref HEAD").trim() || "main";
+    if (status) {
+      execSync("git add -A", { cwd: root, stdio: "ignore" });
+      execSync(`git commit -m "publish: ${new Date().toISOString()}"`, { cwd: root, stdio: "ignore" });
+    }
     try {
       execSync(`git push origin ${branch}`, { cwd: root, stdio: "ignore" });
     } catch {
