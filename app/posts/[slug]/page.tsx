@@ -81,7 +81,7 @@ export default async function PostPage({ params }: Props) {
               <Link
                 key={t}
                 href={`/tags/${encodeURIComponent(t)}`}
-                className="rounded-full bg-indigo-500/10 px-2.5 py-0.5 text-xs text-indigo-500 transition hover:bg-indigo-500/20 dark:text-indigo-300"
+                className="rounded-full bg-sky-500/10 px-2.5 py-0.5 text-xs text-sky-500 transition hover:bg-sky-500/20 dark:text-sky-300"
               >
                 # {t}
               </Link>

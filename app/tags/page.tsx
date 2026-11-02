@@ -25,7 +25,7 @@ export default function TagsPage() {
                 href={`/tags/${encodeURIComponent(tag)}`}
                 className="glass glass-hover rounded-full px-4 py-1.5 text-sm text-slate-600 dark:text-slate-300"
               >
-                <span className="text-indigo-500 dark:text-indigo-300"># {tag}</span>
+                <span className="text-sky-500 dark:text-sky-300"># {tag}</span>
                 <span className="ml-1.5 text-xs text-slate-400">{count}</span>
               </Link>
             ))}

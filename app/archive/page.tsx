@@ -17,7 +17,7 @@ export default function ArchivePage() {
 
       {groups.map((g) => (
         <section key={g.year} className="glass mt-5 p-6">
-          <h2 className="text-2xl font-bold text-indigo-500/90 dark:text-indigo-300">{g.year}</h2>
+          <h2 className="text-2xl font-bold text-sky-500/90 dark:text-sky-300">{g.year}</h2>
           <ul className="mt-3 flex flex-col gap-1">
             {g.posts.map((p) => (
               <li key={p.slug}>
@@ -28,7 +28,7 @@ export default function ArchivePage() {
                   <span className="shrink-0 font-mono text-xs text-slate-400 dark:text-slate-500">
                     {p.date.slice(5)}
                   </span>
-                  <span className="truncate text-sm text-slate-700 transition group-hover:text-indigo-600 dark:text-slate-300 dark:group-hover:text-indigo-300">
+                  <span className="truncate text-sm text-slate-700 transition group-hover:text-sky-600 dark:text-slate-300 dark:group-hover:text-sky-300">
                     {p.title}
                   </span>
                 </Link>

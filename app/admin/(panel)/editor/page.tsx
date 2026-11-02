@@ -116,7 +116,7 @@ function EditorInner() {
   }
 
   const inputCls =
-    "rounded-xl border border-white/60 bg-white/60 px-3 py-2 text-sm outline-none transition focus:border-indigo-400 dark:border-white/10 dark:bg-slate-800/60 dark:text-slate-100";
+    "rounded-xl border border-white/60 bg-white/60 px-3 py-2 text-sm outline-none transition focus:border-sky-400 dark:border-white/10 dark:bg-slate-800/60 dark:text-slate-100";
 
   return (
     <div>
@@ -141,7 +141,7 @@ function EditorInner() {
           <button
             onClick={() => save(false)}
             disabled={saving || uploading}
-            className="rounded-xl bg-gradient-to-r from-indigo-500 to-cyan-500 px-4 py-2 text-sm font-semibold text-white transition hover:opacity-90 disabled:opacity-50"
+            className="rounded-xl bg-gradient-to-r from-sky-500 to-cyan-500 px-4 py-2 text-sm font-semibold text-white transition hover:opacity-90 disabled:opacity-50"
           >
             {saving ? "保存中…" : "保存发布"}
           </button>
@@ -204,7 +204,7 @@ function EditorInner() {
               type="checkbox"
               checked={pinned}
               onChange={(e) => setPinned(e.target.checked)}
-              className="h-4 w-4 accent-indigo-500"
+              className="h-4 w-4 accent-sky-500"
             />
             📌 置顶到列表最前
           </label>
@@ -239,7 +239,7 @@ function EditorInner() {
             value={content}
             onChange={(e) => setContent(e.target.value)}
             placeholder="# 用 Markdown 写正文…"
-            className="h-[60vh] w-full resize-y rounded-xl border border-white/40 bg-white/40 p-4 font-mono text-sm leading-relaxed outline-none focus:border-indigo-400 dark:border-white/5 dark:bg-slate-900/60 dark:text-slate-100"
+            className="h-[60vh] w-full resize-y rounded-xl border border-white/40 bg-white/40 p-4 font-mono text-sm leading-relaxed outline-none focus:border-sky-400 dark:border-white/5 dark:bg-slate-900/60 dark:text-slate-100"
           />
         </div>
 

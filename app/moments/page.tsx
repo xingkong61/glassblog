@@ -20,10 +20,10 @@ const MOOD_EMOJI: Record<string, string> = {
 
 const HEAT_COLORS = [
   "bg-slate-200/60 dark:bg-slate-700/40",
-  "bg-indigo-200 dark:bg-indigo-800",
-  "bg-indigo-300 dark:bg-indigo-600",
-  "bg-indigo-400 dark:bg-indigo-500",
-  "bg-indigo-500 dark:bg-indigo-400",
+  "bg-sky-200 dark:bg-sky-800",
+  "bg-sky-300 dark:bg-sky-600",
+  "bg-sky-400 dark:bg-sky-500",
+  "bg-sky-500 dark:bg-sky-400",
 ];
 
 function heatClass(count: number, max: number): string {
@@ -74,14 +74,14 @@ export default function MomentsPage() {
 
       <div className="relative mt-6 flex flex-col gap-4">
         {/* 时间轴竖线 */}
-        <div className="absolute top-2 bottom-2 left-[7px] w-px bg-gradient-to-b from-indigo-300/70 via-cyan-300/50 to-transparent dark:from-indigo-500/40 dark:via-cyan-500/30" />
+        <div className="absolute top-2 bottom-2 left-[7px] w-px bg-gradient-to-b from-sky-300/70 via-cyan-300/50 to-transparent dark:from-sky-500/40 dark:via-cyan-500/30" />
 
         {moments.map((m) => (
           <article key={m.slug} className="relative pl-7">
-            <div className="absolute top-6 left-0 h-3.5 w-3.5 rounded-full border-2 border-white bg-gradient-to-br from-indigo-400 to-cyan-400 shadow dark:border-slate-800" />
+            <div className="absolute top-6 left-0 h-3.5 w-3.5 rounded-full border-2 border-white bg-gradient-to-br from-sky-400 to-cyan-400 shadow dark:border-slate-800" />
             <div className="glass glass-hover p-5">
               <div className="flex flex-wrap items-center gap-2 text-xs text-slate-400 dark:text-slate-500">
-                <span className="rounded-full bg-indigo-500/10 px-2 py-0.5 text-indigo-500 dark:text-indigo-300">
+                <span className="rounded-full bg-sky-500/10 px-2 py-0.5 text-sky-500 dark:text-sky-300">
                   {MOOD_EMOJI[m.mood] ?? "💭"} {m.mood}
                 </span>
                 <span className="font-mono">{m.date}</span>

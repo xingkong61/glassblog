@@ -5,7 +5,7 @@ import { api } from "@/lib/client";
 import type { SiteConfig } from "@/lib/types";
 
 const inputCls =
-  "w-full rounded-xl border border-white/60 bg-white/60 px-3 py-2 text-sm outline-none transition focus:border-indigo-400 dark:border-white/10 dark:bg-slate-800/60 dark:text-slate-100";
+  "w-full rounded-xl border border-white/60 bg-white/60 px-3 py-2 text-sm outline-none transition focus:border-sky-400 dark:border-white/10 dark:bg-slate-800/60 dark:text-slate-100";
 
 function Card({ title, desc, children }: { title: string; desc?: string; children: React.ReactNode }) {
   return (
@@ -277,7 +277,7 @@ export default function SettingsPage() {
               type="checkbox"
               checked={site.subscribe.enabled}
               onChange={(e) => patch({ subscribe: { ...site.subscribe, enabled: e.target.checked } })}
-              className="h-4 w-4 accent-indigo-500"
+              className="h-4 w-4 accent-sky-500"
             />
             开启订阅入口
           </label>
@@ -409,7 +409,7 @@ export default function SettingsPage() {
               onChange={(e) =>
                 patch({ comments: { ...site.comments, giscus: { ...site.comments.giscus, reactions: e.target.checked } } })
               }
-              className="h-4 w-4 accent-indigo-500"
+              className="h-4 w-4 accent-sky-500"
             />
             允许表情表态
           </label>
@@ -421,7 +421,7 @@ export default function SettingsPage() {
               type="checkbox"
               checked={site.levelSystem}
               onChange={(e) => patch({ levelSystem: e.target.checked })}
-              className="h-4 w-4 accent-indigo-500"
+              className="h-4 w-4 accent-sky-500"
             />
             启用等级系统
           </label>
@@ -433,7 +433,7 @@ export default function SettingsPage() {
               type="checkbox"
               checked={site.music.enabled}
               onChange={(e) => patch({ music: { ...site.music, enabled: e.target.checked } })}
-              className="h-4 w-4 accent-indigo-500"
+              className="h-4 w-4 accent-sky-500"
             />
             启用 BGM 挂件
           </label>
@@ -497,7 +497,7 @@ export default function SettingsPage() {
               type="checkbox"
               checked={site.ai.enabled}
               onChange={(e) => patch({ ai: { ...site.ai, enabled: e.target.checked } })}
-              className="h-4 w-4 accent-indigo-500"
+              className="h-4 w-4 accent-sky-500"
             />
             在前台启用助理
           </label>
@@ -610,7 +610,7 @@ export default function SettingsPage() {
             rows={8}
             className={cx(inputCls, "resize-y font-mono")}
           />
-          <button onClick={saveAbout} disabled={saving} className="self-start rounded-xl bg-indigo-500/15 px-4 py-2 text-sm font-semibold text-indigo-600 transition hover:bg-indigo-500/25 disabled:opacity-50 dark:text-indigo-300">
+          <button onClick={saveAbout} disabled={saving} className="self-start rounded-xl bg-sky-500/15 px-4 py-2 text-sm font-semibold text-sky-600 transition hover:bg-sky-500/25 disabled:opacity-50 dark:text-sky-300">
             保存关于页
           </button>
         </Card>
@@ -634,7 +634,7 @@ export default function SettingsPage() {
         <button
           onClick={saveSite}
           disabled={saving}
-          className="self-start rounded-xl bg-gradient-to-r from-indigo-500 to-cyan-500 px-6 py-2.5 text-sm font-semibold text-white transition hover:opacity-90 disabled:opacity-50"
+          className="self-start rounded-xl bg-gradient-to-r from-sky-500 to-cyan-500 px-6 py-2.5 text-sm font-semibold text-white transition hover:opacity-90 disabled:opacity-50"
         >
           {saving ? "保存中…" : "保存以上站点设置"}
         </button>

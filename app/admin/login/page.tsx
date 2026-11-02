@@ -45,14 +45,14 @@ export default function LoginPage() {
           onChange={(e) => setPassword(e.target.value)}
           placeholder="后台密码"
           autoFocus
-          className="mt-5 w-full rounded-xl border border-white/60 bg-white/60 px-4 py-2.5 text-sm outline-none transition focus:border-indigo-400 dark:border-white/10 dark:bg-slate-800/60 dark:text-slate-100"
+          className="mt-5 w-full rounded-xl border border-white/60 bg-white/60 px-4 py-2.5 text-sm outline-none transition focus:border-sky-400 dark:border-white/10 dark:bg-slate-800/60 dark:text-slate-100"
         />
         {error ? <p className="mt-2 text-xs text-rose-500">{error}</p> : null}
 
         <button
           type="submit"
           disabled={loading}
-          className="mt-4 w-full rounded-xl bg-gradient-to-r from-indigo-500 to-cyan-500 py-2.5 text-sm font-semibold text-white transition hover:opacity-90 disabled:opacity-50"
+          className="mt-4 w-full rounded-xl bg-gradient-to-r from-sky-500 to-cyan-500 py-2.5 text-sm font-semibold text-white transition hover:opacity-90 disabled:opacity-50"
         >
           {loading ? "验证中…" : "进入后台"}
         </button>

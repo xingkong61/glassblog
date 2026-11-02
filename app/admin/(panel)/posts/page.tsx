@@ -50,7 +50,7 @@ export default function PostsAdminPage() {
         <h1 className="text-xl font-bold text-slate-800 dark:text-slate-100">文章管理</h1>
         <Link
           href="/admin/editor"
-          className="rounded-xl bg-gradient-to-r from-indigo-500 to-cyan-500 px-4 py-2 text-sm font-semibold text-white transition hover:opacity-90"
+          className="rounded-xl bg-gradient-to-r from-sky-500 to-cyan-500 px-4 py-2 text-sm font-semibold text-white transition hover:opacity-90"
         >
           ✍️ 写新文章
         </Link>
@@ -70,7 +70,7 @@ export default function PostsAdminPage() {
             className={cx(
               "rounded-full px-3.5 py-1.5 text-xs transition",
               filter === key
-                ? "bg-indigo-500/15 font-semibold text-indigo-600 dark:text-indigo-300"
+                ? "bg-sky-500/15 font-semibold text-sky-600 dark:text-sky-300"
                 : "bg-white/50 text-slate-500 hover:bg-white/80 dark:bg-white/5 dark:text-slate-400",
             )}
           >
@@ -114,7 +114,7 @@ export default function PostsAdminPage() {
                 ) : null}
                 <Link
                   href={`/admin/editor?slug=${encodeURIComponent(p.slug)}`}
-                  className="rounded-lg bg-indigo-500/10 px-3 py-1.5 text-indigo-600 transition hover:bg-indigo-500/20 dark:text-indigo-300"
+                  className="rounded-lg bg-sky-500/10 px-3 py-1.5 text-sky-600 transition hover:bg-sky-500/20 dark:text-sky-300"
                 >
                   编辑
                 </Link>

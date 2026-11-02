@@ -7,7 +7,7 @@ import { cx } from "@/lib/format";
 import type { DigestFull, DigestMeta } from "@/lib/types";
 
 const inputCls =
-  "rounded-xl border border-white/60 bg-white/60 px-3 py-2 text-sm outline-none transition focus:border-indigo-400 dark:border-white/10 dark:bg-slate-800/60 dark:text-slate-100";
+  "rounded-xl border border-white/60 bg-white/60 px-3 py-2 text-sm outline-none transition focus:border-sky-400 dark:border-white/10 dark:bg-slate-800/60 dark:text-slate-100";
 
 export default function DigestsAdminPage() {
   const [digests, setDigests] = useState<DigestMeta[]>([]);
@@ -121,7 +121,7 @@ export default function DigestsAdminPage() {
           <button
             onClick={generate}
             disabled={generating}
-            className="rounded-xl bg-gradient-to-r from-indigo-500 to-cyan-500 px-4 py-2 text-sm font-semibold text-white transition hover:opacity-90 disabled:opacity-50"
+            className="rounded-xl bg-gradient-to-r from-sky-500 to-cyan-500 px-4 py-2 text-sm font-semibold text-white transition hover:opacity-90 disabled:opacity-50"
           >
             {generating ? "生成中…" : "✨ 生成今日选刊"}
           </button>
@@ -137,13 +137,13 @@ export default function DigestsAdminPage() {
           <div className="flex flex-wrap items-center gap-3">
             <input value={eTitle} onChange={(e) => setETitle(e.target.value)} className={cx(inputCls, "min-w-60 flex-1")} />
             <label className="flex cursor-pointer items-center gap-2 text-sm text-slate-600 dark:text-slate-300">
-              <input type="checkbox" checked={eDraft} onChange={(e) => setEDraft(e.target.checked)} className="h-4 w-4 accent-indigo-500" />
+              <input type="checkbox" checked={eDraft} onChange={(e) => setEDraft(e.target.checked)} className="h-4 w-4 accent-sky-500" />
               存为草稿
             </label>
             <button
               onClick={saveEdit}
               disabled={saving || !eTitle.trim() || !eContent.trim()}
-              className="rounded-xl bg-indigo-500/15 px-4 py-2 text-sm font-semibold text-indigo-600 transition hover:bg-indigo-500/25 disabled:opacity-50 dark:text-indigo-300"
+              className="rounded-xl bg-sky-500/15 px-4 py-2 text-sm font-semibold text-sky-600 transition hover:bg-sky-500/25 disabled:opacity-50 dark:text-sky-300"
             >
               {saving ? "保存中…" : eDraft ? "保存草稿" : "审核通过并发布"}
             </button>
@@ -196,7 +196,7 @@ export default function DigestsAdminPage() {
                 ) : null}
                 <button
                   onClick={() => openEdit(d.slug)}
-                  className="rounded-lg bg-indigo-500/10 px-3 py-1.5 text-indigo-600 transition hover:bg-indigo-500/20 dark:text-indigo-300"
+                  className="rounded-lg bg-sky-500/10 px-3 py-1.5 text-sky-600 transition hover:bg-sky-500/20 dark:text-sky-300"
                 >
                   编辑
                 </button>

@@ -1,10 +1,10 @@
-import { describe, expect, it } from "vitest";
+﻿import { describe, expect, it } from "vitest";
 import { absoluteUrl, breadcrumbJsonLd, postJsonLd, postUrl, siteBase, websiteJsonLd } from "@/lib/seo";
 import type { PostFull, SiteConfig } from "@/lib/types";
 
 const site: SiteConfig = {
   siteName: "玻璃小栈",
-  siteUrl: "https://www.xingkongly.top/",
+  siteUrl: "https://xingkongly.top/",
   subtitle: "一块会发光的毛玻璃",
   description: "记录技术、生活与灵感的个人博客",
   author: "博主",
@@ -48,17 +48,17 @@ const post: PostFull = {
 
 describe("SEO 构造", () => {
   it("siteBase 去尾部斜杠，空值返回空串", () => {
-    expect(siteBase(site)).toBe("https://www.xingkongly.top");
+    expect(siteBase(site)).toBe("https://xingkongly.top");
     expect(siteBase({ siteUrl: "" })).toBe("");
   });
 
   it("postUrl：siteUrl 为空时返回 undefined", () => {
     expect(postUrl({ siteUrl: "" }, "hello")).toBeUndefined();
-    expect(postUrl(site, "hello")).toBe("https://www.xingkongly.top/posts/hello");
+    expect(postUrl(site, "hello")).toBe("https://xingkongly.top/posts/hello");
   });
 
   it("absoluteUrl：相对路径补全域名，绝对链接原样返回", () => {
-    expect(absoluteUrl(site, "/uploads/a.webp")).toBe("https://www.xingkongly.top/uploads/a.webp");
+    expect(absoluteUrl(site, "/uploads/a.webp")).toBe("https://xingkongly.top/uploads/a.webp");
     expect(absoluteUrl(site, "https://cdn.example.com/b.png")).toBe("https://cdn.example.com/b.png");
   });
 
@@ -66,9 +66,9 @@ describe("SEO 构造", () => {
     const ld = postJsonLd(site, post);
     expect(ld["@type"]).toBe("BlogPosting");
     expect(ld.headline).toBe("你好，玻璃小栈");
-    expect(ld.url).toBe("https://www.xingkongly.top/posts/hello");
-    expect(ld.mainEntityOfPage).toBe("https://www.xingkongly.top/posts/hello");
-    expect(ld.image).toBe("https://www.xingkongly.top/uploads/a.webp");
+    expect(ld.url).toBe("https://xingkongly.top/posts/hello");
+    expect(ld.mainEntityOfPage).toBe("https://xingkongly.top/posts/hello");
+    expect(ld.image).toBe("https://xingkongly.top/uploads/a.webp");
     expect(ld.keywords).toBe("AI,博客");
   });
 
@@ -82,7 +82,7 @@ describe("SEO 构造", () => {
     const ld = breadcrumbJsonLd(site, post);
     const items = ld.itemListElement as Array<{ position: number; item?: string }>;
     expect(items).toHaveLength(2);
-    expect(items[0].item).toBe("https://www.xingkongly.top");
-    expect(items[1].item).toBe("https://www.xingkongly.top/posts/hello");
+    expect(items[0].item).toBe("https://xingkongly.top");
+    expect(items[1].item).toBe("https://xingkongly.top/posts/hello");
   });
 });

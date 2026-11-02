@@ -85,7 +85,7 @@ export default function AIAssistant({
                 key={i}
                 className={`max-w-[85%] rounded-2xl px-3.5 py-2 text-sm leading-relaxed ${
                   m.role === "user"
-                    ? "ml-auto bg-gradient-to-r from-indigo-500 to-cyan-500 text-white"
+                    ? "ml-auto bg-gradient-to-r from-sky-500 to-cyan-500 text-white"
                     : "bg-white/70 text-slate-700 dark:bg-slate-800/70 dark:text-slate-200"
                 }`}
               >
@@ -111,12 +111,12 @@ export default function AIAssistant({
                 }
               }}
               placeholder={`和${name}聊聊…`}
-              className="min-w-0 flex-1 rounded-xl border border-white/60 bg-white/60 px-3 py-2 text-sm outline-none focus:border-indigo-400 dark:border-white/10 dark:bg-slate-800/60 dark:text-slate-100"
+              className="min-w-0 flex-1 rounded-xl border border-white/60 bg-white/60 px-3 py-2 text-sm outline-none focus:border-sky-400 dark:border-white/10 dark:bg-slate-800/60 dark:text-slate-100"
             />
             <button
               onClick={send}
               disabled={busy || !input.trim()}
-              className="shrink-0 rounded-xl bg-gradient-to-r from-indigo-500 to-cyan-500 px-3 py-2 text-sm font-semibold text-white transition hover:opacity-90 disabled:opacity-50"
+              className="shrink-0 rounded-xl bg-gradient-to-r from-sky-500 to-cyan-500 px-3 py-2 text-sm font-semibold text-white transition hover:opacity-90 disabled:opacity-50"
             >
               发送
             </button>

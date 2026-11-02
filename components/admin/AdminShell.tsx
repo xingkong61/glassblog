@@ -41,7 +41,7 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
                   className={cx(
                     "rounded-full px-3 py-1.5 text-sm transition",
                     active
-                      ? "bg-indigo-500/15 font-semibold text-indigo-600 dark:text-indigo-300"
+                      ? "bg-sky-500/15 font-semibold text-sky-600 dark:text-sky-300"
                       : "text-slate-600 hover:bg-white/60 dark:text-slate-300 dark:hover:bg-white/10",
                   )}
                 >

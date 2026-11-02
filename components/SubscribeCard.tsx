@@ -3,7 +3,7 @@
 import { useState } from "react";
 
 const inputCls =
-  "w-full rounded-xl border border-white/60 bg-white/60 px-3 py-2 text-sm outline-none transition focus:border-indigo-400 dark:border-white/10 dark:bg-slate-800/60 dark:text-slate-100";
+  "w-full rounded-xl border border-white/60 bg-white/60 px-3 py-2 text-sm outline-none transition focus:border-sky-400 dark:border-white/10 dark:bg-slate-800/60 dark:text-slate-100";
 
 // 邮件订阅卡片：提交到 /api/subscribe，成功/重复/错误都在本地反馈
 export default function SubscribeCard({ title, note }: { title: string; note: string }) {
@@ -64,7 +64,7 @@ export default function SubscribeCard({ title, note }: { title: string; note: st
         <button
           type="submit"
           disabled={busy || !email.trim()}
-          className="rounded-xl bg-indigo-500/15 py-2 text-xs font-semibold text-indigo-600 transition hover:bg-indigo-500/25 disabled:opacity-50 dark:text-indigo-300"
+          className="rounded-xl bg-sky-500/15 py-2 text-xs font-semibold text-sky-600 transition hover:bg-sky-500/25 disabled:opacity-50 dark:text-sky-300"
         >
           {busy ? "提交中…" : "订阅"}
         </button>

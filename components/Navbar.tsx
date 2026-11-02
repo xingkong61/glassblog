@@ -37,7 +37,7 @@ function ThemeToggle() {
     <button
       onClick={toggle}
       aria-label={dark ? "切换到浅色模式" : "切换到深色模式"}
-      className="flex h-9 w-9 items-center justify-center rounded-full text-lg transition hover:bg-white/50 dark:hover:bg-white/10"
+      className="flex h-9 w-9 items-center justify-center rounded-full text-lg transition hover:bg-sky-500/10"
     >
       {dark ? "🌙" : "☀️"}
     </button>
@@ -58,14 +58,15 @@ export default function Navbar({ siteName, showDigests = false }: { siteName: st
   const links = showDigests ? [NAV_LINKS[0], DIGEST_LINK, ...NAV_LINKS.slice(1)] : NAV_LINKS;
 
   return (
-    <header className="sticky top-0 z-40 px-4 pt-4 sm:px-6">
-      <nav className="glass mx-auto flex max-w-6xl items-center justify-between px-4 py-2.5 sm:px-5">
+    <header className="sticky top-0 z-40 px-3 pt-3 sm:px-6 sm:pt-4">
+      <nav className="glass relative mx-auto flex max-w-6xl items-center justify-between px-4 py-2.5 sm:px-5">
         <Link href="/" className="flex items-center gap-2 font-bold text-slate-700 dark:text-slate-100">
           <span className="text-xl">🪟</span>
-          <span className="max-w-[10rem] truncate sm:max-w-none">{siteName}</span>
+          <span className="max-w-[9rem] truncate sm:max-w-none">{siteName}</span>
         </Link>
 
-        <div className="hidden items-center gap-1 md:flex">
+        {/* 桌面端菜单居中（参考目标站导航布局） */}
+        <div className="absolute left-1/2 hidden -translate-x-1/2 items-center gap-1 md:flex">
           {links.map((l) => {
             const active = l.href === "/" ? pathname === "/" : pathname?.startsWith(l.href);
             return (
@@ -75,23 +76,22 @@ export default function Navbar({ siteName, showDigests = false }: { siteName: st
                 className={cx(
                   "rounded-full px-3.5 py-1.5 text-sm transition",
                   active
-                    ? "bg-indigo-500/15 font-semibold text-indigo-600 dark:text-indigo-300"
-                    : "text-slate-600 hover:bg-white/50 dark:text-slate-300 dark:hover:bg-white/10",
+                    ? "bg-sky-500/15 font-semibold text-sky-600 dark:text-sky-300"
+                    : "text-slate-600 hover:bg-sky-500/10 hover:text-sky-600 dark:text-slate-300 dark:hover:bg-white/10 dark:hover:text-sky-300",
                 )}
               >
                 {l.label}
               </Link>
             );
           })}
-          <ThemeToggle />
         </div>
 
-        <div className="flex items-center gap-1 md:hidden">
+        <div className="flex items-center gap-1">
           <ThemeToggle />
           <button
             onClick={() => setOpen((v) => !v)}
             aria-label="打开菜单"
-            className="flex h-9 w-9 items-center justify-center rounded-full text-lg transition hover:bg-white/50 dark:hover:bg-white/10"
+            className="flex h-9 w-9 items-center justify-center rounded-full text-lg transition hover:bg-sky-500/10 md:hidden"
           >
             {open ? "✕" : "☰"}
           </button>
@@ -109,7 +109,7 @@ export default function Navbar({ siteName, showDigests = false }: { siteName: st
                 className={cx(
                   "block rounded-xl px-4 py-2.5 text-sm",
                   active
-                    ? "bg-indigo-500/15 font-semibold text-indigo-600 dark:text-indigo-300"
+                    ? "bg-sky-500/15 font-semibold text-sky-600 dark:text-sky-300"
                     : "text-slate-600 dark:text-slate-300",
                 )}
               >

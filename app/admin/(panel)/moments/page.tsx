@@ -57,7 +57,7 @@ export default function MomentsAdminPage() {
   }
 
   const inputCls =
-    "rounded-xl border border-white/60 bg-white/60 px-3 py-2 text-sm outline-none transition focus:border-indigo-400 dark:border-white/10 dark:bg-slate-800/60 dark:text-slate-100";
+    "rounded-xl border border-white/60 bg-white/60 px-3 py-2 text-sm outline-none transition focus:border-sky-400 dark:border-white/10 dark:bg-slate-800/60 dark:text-slate-100";
 
   return (
     <div className="mx-auto max-w-2xl">
@@ -84,7 +84,7 @@ export default function MomentsAdminPage() {
           <button
             onClick={publish}
             disabled={busy || !content.trim()}
-            className="ml-auto rounded-xl bg-gradient-to-r from-indigo-500 to-cyan-500 px-4 py-2 text-sm font-semibold text-white transition hover:opacity-90 disabled:opacity-50"
+            className="ml-auto rounded-xl bg-gradient-to-r from-sky-500 to-cyan-500 px-4 py-2 text-sm font-semibold text-white transition hover:opacity-90 disabled:opacity-50"
           >
             {busy ? "发布中…" : "发布说说"}
           </button>
@@ -97,7 +97,7 @@ export default function MomentsAdminPage() {
           <div key={m.slug} className="glass flex items-start gap-3 p-4">
             <div className="min-w-0 flex-1">
               <div className="flex flex-wrap items-center gap-2 text-xs text-slate-400">
-                <span className="rounded-full bg-indigo-500/10 px-2 py-0.5 text-indigo-500 dark:text-indigo-300">{m.mood}</span>
+                <span className="rounded-full bg-sky-500/10 px-2 py-0.5 text-sky-500 dark:text-sky-300">{m.mood}</span>
                 <span className="font-mono">{m.date}</span>
               </div>
               <p className="mt-1.5 whitespace-pre-wrap break-words text-sm text-slate-700 dark:text-slate-200">

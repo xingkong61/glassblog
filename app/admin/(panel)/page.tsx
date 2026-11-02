@@ -47,7 +47,7 @@ export default function AdminDashboard() {
   const words = posts.reduce((s, p) => s + p.wordCount, 0);
 
   const cards = [
-    { label: "文章", value: posts.length - drafts, sub: `草稿 ${drafts} 篇`, href: "/admin/posts", color: "text-indigo-500" },
+    { label: "文章", value: posts.length - drafts, sub: `草稿 ${drafts} 篇`, href: "/admin/posts", color: "text-sky-500" },
     { label: "说说", value: moments.length, sub: "碎碎念", href: "/admin/moments", color: "text-cyan-500" },
     { label: "总字数", value: words.toLocaleString(), sub: "文章累计", href: "/admin/posts", color: "text-fuchsia-500" },
   ];
@@ -71,7 +71,7 @@ export default function AdminDashboard() {
         <div className="glass p-5">
           <h2 className="text-sm font-bold text-slate-700 dark:text-slate-200">快速开始</h2>
           <div className="mt-3 flex flex-col gap-2 text-sm">
-            <Link href="/admin/editor" className="rounded-xl bg-indigo-500/10 px-4 py-2.5 text-indigo-600 transition hover:bg-indigo-500/20 dark:text-indigo-300">
+            <Link href="/admin/editor" className="rounded-xl bg-sky-500/10 px-4 py-2.5 text-sky-600 transition hover:bg-sky-500/20 dark:text-sky-300">
               ✍️ 写一篇文章
             </Link>
             <Link href="/admin/moments" className="rounded-xl bg-cyan-500/10 px-4 py-2.5 text-cyan-600 transition hover:bg-cyan-500/20 dark:text-cyan-300">
@@ -86,10 +86,10 @@ export default function AdminDashboard() {
         <div className="glass p-5">
           <h2 className="text-sm font-bold text-slate-700 dark:text-slate-200">发布到线上</h2>
           <p className="mt-2 text-xs leading-relaxed text-slate-500 dark:text-slate-400">
-            双击项目里的 <code className="rounded bg-indigo-500/10 px-1 py-0.5 text-indigo-500">发布.bat</code>，
+            双击项目里的 <code className="rounded bg-sky-500/10 px-1 py-0.5 text-sky-500">发布.bat</code>，
             或直接点下面按钮。源码推送到 GitHub 后，到服务器执行
-            <code className="rounded bg-indigo-500/10 px-1 py-0.5 text-indigo-500">scripts/deploy-server.sh</code>
-            即可上线。首次使用请先看 <code className="rounded bg-indigo-500/10 px-1 py-0.5 text-indigo-500">docs/部署指南.md</code>。
+            <code className="rounded bg-sky-500/10 px-1 py-0.5 text-sky-500">scripts/deploy-server.sh</code>
+            即可上线。首次使用请先看 <code className="rounded bg-sky-500/10 px-1 py-0.5 text-sky-500">docs/部署指南.md</code>。
           </p>
           <div className="mt-3 flex items-center gap-2">
             <button

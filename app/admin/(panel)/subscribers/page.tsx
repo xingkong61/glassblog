@@ -82,7 +82,7 @@ export default function SubscribersAdminPage() {
           </p>
         </div>
         <div className="flex flex-wrap items-center gap-2 text-xs">
-          <span className="rounded-full bg-indigo-500/10 px-3 py-1.5 font-semibold text-indigo-600 dark:text-indigo-300">
+          <span className="rounded-full bg-sky-500/10 px-3 py-1.5 font-semibold text-sky-600 dark:text-sky-300">
             共 {list.length} 人
           </span>
           <button

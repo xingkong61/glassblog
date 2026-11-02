@@ -36,7 +36,7 @@ export default function MusicWidget({ playlist }: { playlist: MusicItem[] }) {
                 onClick={() => setCurrent(i)}
                 className={`block w-full truncate rounded-lg px-2 py-1 text-left text-xs transition ${
                   i === current
-                    ? "bg-indigo-500/15 font-semibold text-indigo-600 dark:text-indigo-300"
+                    ? "bg-sky-500/15 font-semibold text-sky-600 dark:text-sky-300"
                     : "text-slate-500 hover:bg-white/50 dark:text-slate-400 dark:hover:bg-white/10"
                 }`}
               >
