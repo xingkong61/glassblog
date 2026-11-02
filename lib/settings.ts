@@ -38,6 +38,23 @@ export const DEFAULT_SITE: SiteConfig = {
     greeting: "喵？找我有什么事~",
   },
   ads: { inArticle: "", sidebar: "" },
+  subscribe: {
+    enabled: true,
+    title: "订阅更新",
+    note: "新文章与每日选刊，直接发到你的邮箱。随时可退订。",
+  },
+  comments: {
+    provider: "none",
+    giscus: {
+      repo: "",
+      repoId: "",
+      category: "",
+      categoryId: "",
+      mapping: "pathname",
+      reactions: true,
+      inputPosition: "top",
+    },
+  },
 };
 
 export const DEFAULT_SECRETS: Secrets = {
@@ -45,6 +62,7 @@ export const DEFAULT_SECRETS: Secrets = {
   adminSecret: "change-me-in-secrets",
   ai: { baseUrl: "", apiKey: "", model: "" },
   imageBed: { type: "local", apiUrl: "", token: "" },
+  tavily: { apiKey: "" },
 };
 
 function deepMerge<T>(base: T, patch: Record<string, unknown>): T {

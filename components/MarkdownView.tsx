@@ -10,7 +10,7 @@ export default function MarkdownView({ content }: { content: string }) {
         rehypePlugins={[rehypeHighlight]}
         components={{
           // 正文图片懒加载
-          img: (props) => <img {...props} loading="lazy" />,
+          img: (props) => <img {...props} loading="lazy" decoding="async" />,
         }}
       >
         {content}

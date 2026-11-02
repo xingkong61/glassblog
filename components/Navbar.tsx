@@ -13,6 +13,8 @@ const NAV_LINKS = [
   { href: "/about", label: "关于" },
 ];
 
+const DIGEST_LINK = { href: "/digests", label: "每日选刊" };
+
 function ThemeToggle() {
   const [dark, setDark] = useState(false);
 
@@ -42,7 +44,7 @@ function ThemeToggle() {
   );
 }
 
-export default function Navbar({ siteName }: { siteName: string }) {
+export default function Navbar({ siteName, showDigests = false }: { siteName: string; showDigests?: boolean }) {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
 
@@ -51,6 +53,9 @@ export default function Navbar({ siteName }: { siteName: string }) {
   }, [pathname]);
 
   if (pathname?.startsWith("/admin")) return null;
+
+  // 有已发布选刊时才出现「每日选刊」入口，插在首页之后
+  const links = showDigests ? [NAV_LINKS[0], DIGEST_LINK, ...NAV_LINKS.slice(1)] : NAV_LINKS;
 
   return (
     <header className="sticky top-0 z-40 px-4 pt-4 sm:px-6">
@@ -61,7 +66,7 @@ export default function Navbar({ siteName }: { siteName: string }) {
         </Link>
 
         <div className="hidden items-center gap-1 md:flex">
-          {NAV_LINKS.map((l) => {
+          {links.map((l) => {
             const active = l.href === "/" ? pathname === "/" : pathname?.startsWith(l.href);
             return (
               <Link
@@ -95,7 +100,7 @@ export default function Navbar({ siteName }: { siteName: string }) {
 
       {open && (
         <div className="glass mx-auto mt-2 max-w-6xl p-2 md:hidden">
-          {NAV_LINKS.map((l) => {
+          {links.map((l) => {
             const active = l.href === "/" ? pathname === "/" : pathname?.startsWith(l.href);
             return (
               <Link

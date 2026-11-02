@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import type { PostMeta } from "@/lib/types";
 import { cx } from "@/lib/format";
 
@@ -21,6 +22,18 @@ export default function PostCard({ post, featured = false }: { post: PostMeta; f
           {post.title}
         </Link>
       </h2>
+
+      {post.cover ? (
+        <div className="relative mt-3 h-40 w-full overflow-hidden rounded-xl sm:h-48">
+          <Image
+            src={post.cover}
+            alt={post.title}
+            fill
+            sizes="(max-width: 1024px) 100vw, 640px"
+            className="object-cover"
+          />
+        </div>
+      ) : null}
 
       {post.summary ? (
         <p className="clamp-2 mt-2 text-sm leading-relaxed text-slate-500 dark:text-slate-400">{post.summary}</p>

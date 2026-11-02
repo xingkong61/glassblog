@@ -5,6 +5,8 @@ import { NextRequest, NextResponse } from "next/server";
 import sharp from "sharp";
 import { authGuard } from "@/lib/api-guard";
 import { getRoot } from "@/lib/content";
+import { uploadToCustomBed } from "@/lib/image-bed";
+import { readSecrets } from "@/lib/settings";
 
 export const dynamic = "force-dynamic";
 
@@ -50,11 +52,27 @@ export async function POST(req: NextRequest) {
     }
 
     const name = `${Date.now()}-${crypto.randomBytes(3).toString("hex")}.${ext}`;
+
+    // 配置了外部图床时转发到图床，否则写本地 public/uploads
+    const bed = readSecrets().imageBed;
+    if (bed.type === "custom") {
+      try {
+        const url = await uploadToCustomBed(out, name, isGif ? "image/gif" : "image/webp", bed);
+        return NextResponse.json({ ok: true, url, bytes: out.length, source: "custom" });
+      } catch (err) {
+        const reason = err instanceof Error ? err.message : "未知错误";
+        return NextResponse.json(
+          { error: `外部图床上传失败：${reason}。可到设置里切回本地图床后重试` },
+          { status: 502 },
+        );
+      }
+    }
+
     const dir = path.join(getRoot(), "public", "uploads");
     fs.mkdirSync(dir, { recursive: true });
     fs.writeFileSync(path.join(dir, name), out);
 
-    return NextResponse.json({ ok: true, url: `/uploads/${name}`, bytes: out.length });
+    return NextResponse.json({ ok: true, url: `/uploads/${name}`, bytes: out.length, source: "local" });
   } catch (err) {
     console.error("[glassblog] 图片处理失败", err);
     return NextResponse.json({ error: "图片处理失败，文件可能已损坏" }, { status: 400 });

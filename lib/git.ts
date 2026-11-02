@@ -8,6 +8,16 @@ export interface PublishResult {
   detail?: string;
 }
 
+// 代理配置：读环境变量 GIT_PROXY（如 http://127.0.0.1:11129），未配置则不走代理
+export function configuredProxy(): string {
+  return (process.env.GIT_PROXY ?? "").trim();
+}
+
+export function proxyEnv(proxy: string): Record<string, string> {
+  const p = proxy.trim();
+  return p ? { HTTPS_PROXY: p, HTTP_PROXY: p } : {};
+}
+
 export function publishChanges(dryRun = false): PublishResult {
   const root = getRoot();
   const run = (cmd: string) => execSync(cmd, { cwd: root, encoding: "utf8" });
@@ -43,16 +53,20 @@ export function publishChanges(dryRun = false): PublishResult {
     try {
       execSync(`git push origin ${branch}`, { cwd: root, stdio: "ignore" });
     } catch {
-      // 直连失败 → 走本机系统代理重试（与 scripts/publish.mjs 的兜底一致）
+      // 直连失败：仅在配置了 GIT_PROXY 时走代理重试
+      const proxy = configuredProxy();
+      if (!proxy) {
+        throw new Error("直连推送失败。若需要代理，请设置环境变量 GIT_PROXY（例如 http://127.0.0.1:11129）后重试");
+      }
       execSync(`git push origin ${branch}`, {
         cwd: root,
         stdio: "ignore",
-        env: { ...process.env, HTTPS_PROXY: "http://127.0.0.1:11129", HTTP_PROXY: "http://127.0.0.1:11129" },
+        env: { ...process.env, ...proxyEnv(proxy) },
       });
     }
-    return { ok: true, message: "已推送到 GitHub，Vercel 将自动构建上线（约 1-2 分钟）。" };
+    return { ok: true, message: "已推送到 GitHub。到服务器执行 scripts/deploy-server.sh 后上线。" };
   } catch (err) {
     const detail = err instanceof Error ? err.message : String(err);
-    return { ok: false, message: "推送失败（检查网络 / 代理是否开启 / GitHub 密钥）", detail };
+    return { ok: false, message: "推送失败（检查网络 / 代理设置 GIT_PROXY / GitHub 密钥）", detail };
   }
 }

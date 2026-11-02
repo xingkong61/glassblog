@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { authGuard } from "@/lib/api-guard";
-import { getSiteConfig, isAiConfigured, saveSecrets, saveSiteConfig } from "@/lib/settings";
+import { getSiteConfig, isAiConfigured, readSecrets, saveSecrets, saveSiteConfig } from "@/lib/settings";
 import type { Secrets, SiteConfig } from "@/lib/types";
 
 export const dynamic = "force-dynamic";
@@ -9,7 +9,12 @@ export async function GET() {
   const guard = await authGuard();
   if (guard) return guard;
   // 绝不回传密钥明文，只回传"是否已配置"
-  return NextResponse.json({ site: getSiteConfig(), aiConfigured: isAiConfigured() });
+  const bed = readSecrets().imageBed;
+  return NextResponse.json({
+    site: getSiteConfig(),
+    aiConfigured: isAiConfigured(),
+    imageBed: { type: bed.type, apiUrl: bed.apiUrl, tokenConfigured: Boolean(bed.token) },
+  });
 }
 
 export async function PUT(req: NextRequest) {
@@ -22,10 +27,11 @@ export async function PUT(req: NextRequest) {
       saveSiteConfig(body.site as Record<string, unknown>);
     }
     if (body.secrets) {
-      // 只允许更新 ai / imageBed 两块，防止越权改密码字段
+      // 只允许更新 ai / imageBed / tavily 三块，防止越权改密码字段
       const patch: Record<string, unknown> = {};
       if (body.secrets.ai) patch.ai = body.secrets.ai;
       if (body.secrets.imageBed) patch.imageBed = body.secrets.imageBed;
+      if (body.secrets.tavily) patch.tavily = body.secrets.tavily;
       saveSecrets(patch);
     }
     return NextResponse.json({ ok: true });

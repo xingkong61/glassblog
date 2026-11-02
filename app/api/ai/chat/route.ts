@@ -1,7 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
+import { rateLimit } from "@/lib/rate-limit";
 import { getSiteConfig, aiRuntimeConfig } from "@/lib/settings";
 
 export const dynamic = "force-dynamic";
+
+// 单 IP 每分钟最多 20 次对话：公开接口，防脚本刷 key 烧钱
+const RATE_LIMIT = 20;
+const RATE_WINDOW_MS = 60_000;
 
 interface ChatMessage {
   role: "user" | "assistant";
@@ -15,6 +20,11 @@ export async function POST(req: NextRequest) {
 
   if (!site.ai.enabled || !ai.apiKey || !ai.baseUrl || !ai.model) {
     return NextResponse.json({ error: "助理未启用" }, { status: 404 });
+  }
+
+  const ip = req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || "unknown";
+  if (!rateLimit(`ai-chat:${ip}`, RATE_LIMIT, RATE_WINDOW_MS)) {
+    return NextResponse.json({ error: "聊得太快啦，歇一分钟再来" }, { status: 429 });
   }
 
   let message = "";

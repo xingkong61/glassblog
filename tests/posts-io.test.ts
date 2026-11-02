@@ -55,6 +55,13 @@ describe("文章写入", () => {
       savePost({ slug: "", title: "  ", date: "2026-01-01", tags: [], draft: false, summary: "", content: "x" }),
     ).toThrow(/标题/);
   });
+
+  it("置顶字段保存后可读回，省略时默认不置顶", () => {
+    savePost({ slug: "pin", title: "置顶文", date: "2026-01-01", tags: [], draft: false, pinned: true, summary: "", content: "x" });
+    savePost({ slug: "plain", title: "普通文", date: "2026-01-02", tags: [], draft: false, summary: "", content: "x" });
+    expect(getPost("pin", { includeDrafts: true })!.pinned).toBe(true);
+    expect(getPost("plain", { includeDrafts: true })!.pinned).toBe(false);
+  });
 });
 
 describe("说说与关于页", () => {

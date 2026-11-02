@@ -1,9 +1,13 @@
 import Link from "next/link";
+import Image from "next/image";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import MarkdownView from "@/components/MarkdownView";
 import AdSlot from "@/components/AdSlot";
-import { getAdjacentPosts, getPost, listPosts } from "@/lib/content";
+import JsonLd from "@/components/JsonLd";
+import Comments from "@/components/Comments";
+import { getAdjacentPosts, getPost, getRelatedPosts, listPosts } from "@/lib/content";
+import { breadcrumbJsonLd, postJsonLd, postUrl } from "@/lib/seo";
 import { getSiteConfig } from "@/lib/settings";
 
 interface Props {
@@ -18,16 +22,25 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
   const post = getPost(slug, { includeDrafts: process.env.NODE_ENV !== "production" });
   if (!post) return { title: "文章不存在" };
+  const site = getSiteConfig();
+  const canonical = postUrl(site, slug);
   return {
     title: post.title,
     description: post.summary,
+    alternates: canonical ? { canonical } : undefined,
     openGraph: {
       type: "article",
       title: post.title,
       description: post.summary,
       publishedTime: post.date,
       tags: post.tags,
-      images: post.cover ? [post.cover] : undefined,
+      images: post.cover ? [post.cover] : [site.avatar],
+    },
+    twitter: {
+      card: post.cover ? "summary_large_image" : "summary",
+      title: post.title,
+      description: post.summary,
+      images: post.cover ? [post.cover] : [site.avatar],
     },
   };
 }
@@ -37,10 +50,14 @@ export default async function PostPage({ params }: Props) {
   const post = getPost(slug, { includeDrafts: process.env.NODE_ENV !== "production" });
   if (!post) notFound();
 
+  const site = getSiteConfig();
   const { prev, next } = getAdjacentPosts(post.slug);
+  const related = getRelatedPosts(post.slug);
 
   return (
     <div className="mx-auto max-w-3xl pt-2">
+      <JsonLd data={postJsonLd(site, post)} />
+      <JsonLd data={breadcrumbJsonLd(site, post)} />
       {post.draft ? (
         <div className="glass mb-4 border-amber-300/60 px-4 py-2 text-center text-xs text-amber-600 dark:text-amber-300">
           草稿预览模式——这篇还没发布，线上访客看不到
@@ -72,6 +89,19 @@ export default async function PostPage({ params }: Props) {
           </div>
         ) : null}
 
+        {post.cover ? (
+          <div className="relative mt-4 h-56 w-full overflow-hidden rounded-xl sm:h-80">
+            <Image
+              src={post.cover}
+              alt={post.title}
+              fill
+              sizes="(max-width: 768px) 100vw, 768px"
+              className="object-cover"
+              priority
+            />
+          </div>
+        ) : null}
+
         <hr className="my-6 border-slate-200/60 dark:border-slate-600/40" />
 
         <MarkdownView content={post.content} />
@@ -95,6 +125,22 @@ export default async function PostPage({ params }: Props) {
           </Link>
         ) : null}
       </nav>
+
+      {related.length > 0 ? (
+        <section className="mt-6">
+          <h2 className="mb-3 text-sm font-bold text-slate-500 dark:text-slate-400">相关文章</h2>
+          <div className="grid gap-3 sm:grid-cols-2">
+            {related.map((r) => (
+              <Link key={r.slug} href={`/posts/${r.slug}`} className="glass glass-hover p-4 text-sm">
+                <div className="text-xs text-slate-400">{r.date}</div>
+                <div className="mt-1 font-semibold text-slate-700 dark:text-slate-200">{r.title}</div>
+              </Link>
+            ))}
+          </div>
+        </section>
+      ) : null}
+
+      {site.comments.provider === "giscus" ? <Comments config={site.comments.giscus} /> : null}
     </div>
   );
 }

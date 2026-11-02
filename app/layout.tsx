@@ -6,6 +6,7 @@ import Footer from "@/components/Footer";
 import MusicWidget from "@/components/MusicWidget";
 import AIAssistant from "@/components/AIAssistant";
 import { getSiteConfig, isAiConfigured } from "@/lib/settings";
+import { getLatestDigest } from "@/lib/content";
 
 // 系统字体栈：避免构建期拉取 Google Fonts（国内网络不稳定）
 const fontStack =
@@ -13,17 +14,25 @@ const fontStack =
 
 export async function generateMetadata(): Promise<Metadata> {
   const site = getSiteConfig();
+  const base = site.siteUrl.trim().replace(/\/$/, "");
   return {
-    metadataBase: site.siteUrl ? new URL(site.siteUrl) : undefined,
+    metadataBase: base ? new URL(base) : undefined,
     title: {
       default: `${site.siteName} · ${site.subtitle}`,
       template: `%s · ${site.siteName}`,
     },
     description: site.description,
     icons: { icon: "/icon.svg" },
+    alternates: base ? { canonical: base } : undefined,
     openGraph: {
       type: "website",
       siteName: site.siteName,
+      title: `${site.siteName} · ${site.subtitle}`,
+      description: site.description,
+      images: [site.avatar],
+    },
+    twitter: {
+      card: "summary",
       title: `${site.siteName} · ${site.subtitle}`,
       description: site.description,
       images: [site.avatar],
@@ -51,7 +60,7 @@ export default function RootLayout({
           <span />
           <span />
         </div>
-        <Navbar siteName={site.siteName} />
+        <Navbar siteName={site.siteName} showDigests={Boolean(getLatestDigest())} />
         <main className="mx-auto w-full max-w-6xl px-4 pb-16 pt-6 sm:px-6">{children}</main>
         <Footer />
         {site.analytics.trim() ? (

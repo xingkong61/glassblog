@@ -1,15 +1,23 @@
 import Link from "next/link";
+import Image from "next/image";
 import PostCard from "@/components/PostCard";
 import AdSlot from "@/components/AdSlot";
-import { getStats, listPosts } from "@/lib/content";
+import JsonLd from "@/components/JsonLd";
+import SubscribeCard from "@/components/SubscribeCard";
+import { getLatestDigest, getStats, listPosts } from "@/lib/content";
 import { getLevel } from "@/lib/level";
+import { websiteJsonLd } from "@/lib/seo";
 import { getSiteConfig } from "@/lib/settings";
 
 export default async function HomePage() {
   const site = getSiteConfig();
   const posts = listPosts({ includeDrafts: process.env.NODE_ENV !== "production" });
+  // 首页只渲染最新一批，避免文章多了以后首屏 HTML 无限膨胀；全量在 /archive
+  const HOME_LIMIT = 20;
+  const visiblePosts = posts.slice(0, HOME_LIMIT);
   const stats = getStats();
   const level = site.levelSystem ? getLevel(stats) : null;
+  const digest = getLatestDigest();
 
   const socials: Array<[string, string]> = (
     [
@@ -22,6 +30,7 @@ export default async function HomePage() {
 
   return (
     <div className="mx-auto grid max-w-6xl gap-6 pt-2 lg:grid-cols-[1fr_320px]">
+      <JsonLd data={websiteJsonLd(site)} />
       {/* 文章流 */}
       <section className="flex flex-col gap-5">
         <div className="glass px-6 py-5">
@@ -31,23 +40,47 @@ export default async function HomePage() {
           <p className="mt-1.5 text-sm text-slate-500 dark:text-slate-400">{site.description}</p>
         </div>
 
+        {digest ? (
+          <Link href={`/digests/${digest.slug}`} className="glass glass-hover block px-6 py-5">
+            <div className="flex items-center justify-between text-xs font-semibold text-cyan-600 dark:text-cyan-300">
+              <span>📬 每日选刊 · {digest.date}</span>
+              <span className="font-normal text-slate-400">读这一期 →</span>
+            </div>
+            <div className="mt-2 font-bold text-slate-800 dark:text-slate-100">{digest.title}</div>
+            <p className="clamp-2 mt-1 text-sm text-slate-500 dark:text-slate-400">
+              {digest.content.replace(/[#>*`\-[\]]/g, "").slice(0, 100)}
+            </p>
+          </Link>
+        ) : null}
+
         {posts.length === 0 ? (
           <div className="glass p-10 text-center text-sm text-slate-400">
             还没有文章。到本地后台写下第一篇吧 →
             <code className="ml-1 rounded bg-indigo-500/10 px-1.5 py-0.5 text-indigo-500">/admin</code>
           </div>
         ) : (
-          posts.map((p) => <PostCard key={p.slug} post={p} />)
+          visiblePosts.map((p) => <PostCard key={p.slug} post={p} featured={p.pinned} />)
         )}
+
+        {posts.length > HOME_LIMIT ? (
+          <Link
+            href="/archive"
+            className="glass glass-hover block px-5 py-4 text-center text-sm font-semibold text-indigo-600 dark:text-indigo-300"
+          >
+            还有 {posts.length - HOME_LIMIT} 篇，去归档看全部 →
+          </Link>
+        ) : null}
       </section>
 
       {/* 侧栏 */}
       <aside className="flex flex-col gap-5">
         <div className="glass p-6 text-center">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
+          <Image
             src={site.avatar}
             alt={site.author}
+            width={80}
+            height={80}
+            sizes="80px"
             className="mx-auto h-20 w-20 rounded-full border-2 border-white/70 shadow-lg"
           />
           <div className="mt-3 text-lg font-bold text-slate-800 dark:text-slate-100">{site.author}</div>
@@ -109,6 +142,10 @@ export default async function HomePage() {
             浏览全部文章 →
           </Link>
         </div>
+
+        {site.subscribe.enabled ? (
+          <SubscribeCard title={site.subscribe.title} note={site.subscribe.note} />
+        ) : null}
 
         <AdSlot code={site.ads.sidebar} />
       </aside>

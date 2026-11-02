@@ -61,6 +61,28 @@ body {
     box-shadow 0.25s ease;
 }
 
+/* 不支持 backdrop-filter 的老浏览器/低端设备：降级为实色背景，保证正文可读 */
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .glass {
+    background: rgba(255, 255, 255, 0.94);
+  }
+
+  .dark .glass {
+    background: rgba(15, 23, 42, 0.94);
+  }
+}
+
+/* 系统偏好「减少透明效果」时同样降级 */
+@media (prefers-reduced-transparency: reduce) {
+  .glass {
+    background: rgba(255, 255, 255, 0.94);
+  }
+
+  .dark .glass {
+    background: rgba(15, 23, 42, 0.94);
+  }
+}
+
 .glass-hover:hover {
   transform: translateY(-3px);
   box-shadow: 0 16px 44px rgba(31, 38, 135, 0.2);

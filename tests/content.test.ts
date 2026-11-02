@@ -2,7 +2,7 @@ import { mkdtempSync, rmSync, writeFileSync, mkdirSync } from "node:fs";
 import { tmpdir } from "node:os";
 import path from "node:path";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
-import { countWords, getPost, isSafeSlug, listPosts, readingMinutesOf } from "@/lib/content";
+import { countWords, getPost, getRelatedPosts, isSafeSlug, listPosts, readingMinutesOf } from "@/lib/content";
 
 let root: string;
 
@@ -67,5 +67,24 @@ describe("内容读取层", () => {
     expect(countWords("hello 世界 \n 两次")).toBe(9);
     expect(readingMinutesOf(0)).toBe(1);
     expect(readingMinutesOf(1200)).toBe(3);
+  });
+
+  it("置顶文章排在最前，其余按日期倒序", () => {
+    writePost("old-pinned.md", 'title: 旧置顶\ndate: 2026-01-01\npinned: true');
+    writePost("new.md", 'title: 新文\ndate: 2026-06-01');
+    writePost("mid.md", 'title: 中间\ndate: 2026-03-01');
+    const posts = listPosts();
+    expect(posts.map((p) => p.slug)).toEqual(["old-pinned", "new", "mid"]);
+    expect(posts[0].pinned).toBe(true);
+  });
+
+  it("相关文章按标签重合度排序，无重合不出现", () => {
+    writePost("base.md", 'title: 基准\ndate: 2026-06-01\ntags: [AI, 建站]');
+    writePost("two-tags.md", 'title: 双标签\ndate: 2026-01-01\ntags: [AI, 建站, 其他]');
+    writePost("one-tag.md", 'title: 单标签\ndate: 2026-05-01\ntags: [AI]');
+    writePost("none.md", 'title: 无关\ndate: 2026-05-02\ntags: [生活]');
+    const related = getRelatedPosts("base");
+    expect(related.map((p) => p.slug)).toEqual(["two-tags", "one-tag"]);
+    expect(getRelatedPosts("not-exist")).toEqual([]);
   });
 });

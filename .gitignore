@@ -32,6 +32,7 @@ yarn-error.log*
 
 # env files (can opt-in for committing if needed)
 .env*
+!.env.example
 
 # vercel
 .vercel
@@ -42,3 +43,6 @@ next-env.d.ts
 
 # 密钥与本地私有配置（绝不进 git）
 /config/secrets.local.json
+
+# 订阅者等本地私有数据（邮箱属于个人信息，绝不进 git）
+/data/

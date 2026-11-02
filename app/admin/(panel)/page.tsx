@@ -87,8 +87,9 @@ export default function AdminDashboard() {
           <h2 className="text-sm font-bold text-slate-700 dark:text-slate-200">发布到线上</h2>
           <p className="mt-2 text-xs leading-relaxed text-slate-500 dark:text-slate-400">
             双击项目里的 <code className="rounded bg-indigo-500/10 px-1 py-0.5 text-indigo-500">发布.bat</code>，
-            或直接点下面按钮。源码推送 GitHub 后 Vercel 自动构建。
-            首次使用请先看 <code className="rounded bg-indigo-500/10 px-1 py-0.5 text-indigo-500">docs/部署指南.md</code>。
+            或直接点下面按钮。源码推送到 GitHub 后，到服务器执行
+            <code className="rounded bg-indigo-500/10 px-1 py-0.5 text-indigo-500">scripts/deploy-server.sh</code>
+            即可上线。首次使用请先看 <code className="rounded bg-indigo-500/10 px-1 py-0.5 text-indigo-500">docs/部署指南.md</code>。
           </p>
           <div className="mt-3 flex items-center gap-2">
             <button

@@ -3,7 +3,7 @@ import fs from "node:fs";
 import path from "node:path";
 import matter from "gray-matter";
 import { formatDate } from "./format";
-import type { MomentFull, MomentMeta, PostFull, PostMeta } from "./types";
+import type { DigestFull, DigestMeta, MomentFull, MomentMeta, PostFull, PostMeta } from "./types";
 
 // 根目录可被环境变量覆盖（测试隔离用），默认取进程工作目录
 export function getRoot(): string {
@@ -16,6 +16,10 @@ function postsDir(): string {
 
 function momentsDir(): string {
   return path.join(getRoot(), "content", "moments");
+}
+
+function digestsDir(): string {
+  return path.join(getRoot(), "content", "digests");
 }
 
 function aboutFile(): string {
@@ -90,6 +94,7 @@ function toPostMeta(doc: RawDoc): PostMeta {
     date,
     tags: strArray(doc.data.tags),
     draft: doc.data.draft === true,
+    pinned: doc.data.pinned === true,
     summary,
     cover,
     wordCount,
@@ -114,7 +119,12 @@ export function listPosts(opts: { includeDrafts?: boolean } = {}): PostMeta[] {
     if (meta.draft && !opts.includeDrafts) continue;
     posts.push(meta);
   }
-  return posts.sort((a, b) => (a.date < b.date ? 1 : a.date > b.date ? -1 : a.slug < b.slug ? 1 : -1));
+  // 置顶优先，其次按日期倒序
+  return posts.sort(
+    (a, b) =>
+      Number(b.pinned) - Number(a.pinned) ||
+      (a.date < b.date ? 1 : a.date > b.date ? -1 : a.slug < b.slug ? 1 : -1),
+  );
 }
 
 export function getPost(slug: string, opts: { includeDrafts?: boolean } = {}): PostFull | null {
@@ -137,6 +147,20 @@ export function getAdjacentPosts(slug: string): { prev: PostMeta | null; next: P
     prev: idx > 0 ? posts[idx - 1] : null,
     next: idx < posts.length - 1 ? posts[idx + 1] : null,
   };
+}
+
+// 相关文章：按标签重合度排序，重合相同则新文优先；无重合返回空
+export function getRelatedPosts(slug: string, limit = 4): PostMeta[] {
+  const posts = listPosts();
+  const current = posts.find((p) => p.slug === slug);
+  if (!current || current.tags.length === 0) return [];
+  return posts
+    .filter((p) => p.slug !== slug)
+    .map((p) => ({ post: p, score: p.tags.filter((t) => current.tags.includes(t)).length }))
+    .filter((x) => x.score > 0)
+    .sort((a, b) => b.score - a.score || (a.post.date < b.post.date ? 1 : -1))
+    .slice(0, limit)
+    .map((x) => x.post);
 }
 
 export function getArchive(): Array<{ year: number; posts: PostMeta[] }> {
@@ -198,6 +222,48 @@ export function getMoment(slug: string): MomentFull | null {
   const doc = readDoc(momentsDir(), `${slug}.md`);
   if (!doc) return null;
   return { ...toMomentMeta(doc), content: doc.content };
+}
+
+// ---------- 每日选刊 ----------
+
+function toDigestMeta(doc: RawDoc): DigestMeta {
+  return {
+    slug: doc.slug,
+    title: str(doc.data.title, `每日选刊 · ${formatDate(doc.mtime)}`),
+    date: str(doc.data.date, formatDate(doc.mtime)),
+    draft: doc.data.draft === true,
+    wordCount: countWords(doc.content),
+  };
+}
+
+export function listDigests(opts: { includeDrafts?: boolean } = {}): DigestMeta[] {
+  const list: DigestMeta[] = [];
+  for (const file of listMarkdownFiles(digestsDir())) {
+    const doc = readDoc(digestsDir(), file);
+    if (!doc) continue;
+    const meta = toDigestMeta(doc);
+    if (meta.draft && !opts.includeDrafts) continue;
+    list.push(meta);
+  }
+  return list.sort((a, b) => (a.date < b.date ? 1 : -1));
+}
+
+export function getDigest(slug: string, opts: { includeDrafts?: boolean } = {}): DigestFull | null {
+  if (!isSafeSlug(slug)) return null;
+  const file = `${slug}.md`;
+  if (!listMarkdownFiles(digestsDir()).some((f) => f.toLowerCase() === file.toLowerCase())) return null;
+  const doc = readDoc(digestsDir(), file);
+  if (!doc) return null;
+  const meta = toDigestMeta(doc);
+  if (meta.draft && !opts.includeDrafts) return null;
+  return { ...meta, content: doc.content };
+}
+
+// 最新一期已发布选刊（首页卡片用）
+export function getLatestDigest(): DigestFull | null {
+  const latest = listDigests()[0];
+  if (!latest) return null;
+  return getDigest(latest.slug);
 }
 
 // ---------- 关于页 ----------

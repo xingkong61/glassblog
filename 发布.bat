@@ -4,7 +4,7 @@ cd /d %~dp0
 title GlassBlog 一键发布
 echo ==========================================
 echo    GlassBlog 一键发布
-echo    将本地改动推送到 GitHub，Vercel 自动构建
+echo    将本地改动推送到 GitHub，再执行 server deploy
 echo ==========================================
 where git >nul 2>&1
 if errorlevel 1 (

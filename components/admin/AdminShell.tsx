@@ -8,7 +8,9 @@ const LINKS = [
   { href: "/admin", label: "仪表盘" },
   { href: "/admin/posts", label: "文章管理" },
   { href: "/admin/editor", label: "写文章" },
+  { href: "/admin/digests", label: "每日选刊" },
   { href: "/admin/moments", label: "说说" },
+  { href: "/admin/subscribers", label: "订阅者" },
   { href: "/admin/settings", label: "设置" },
 ];
 

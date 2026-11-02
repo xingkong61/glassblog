@@ -20,6 +20,13 @@ function Card({ title, desc, children }: { title: string; desc?: string; childre
 export default function SettingsPage() {
   const [site, setSite] = useState<SiteConfig | null>(null);
   const [aiForm, setAiForm] = useState({ baseUrl: "", apiKey: "", model: "" });
+  const [tavilyKey, setTavilyKey] = useState("");
+  const [bedForm, setBedForm] = useState<{ type: "local" | "custom"; apiUrl: string; token: string; tokenConfigured: boolean }>({
+    type: "local",
+    apiUrl: "",
+    token: "",
+    tokenConfigured: false,
+  });
   const [aboutContent, setAboutContent] = useState("");
   const [pwd, setPwd] = useState({ current: "", next: "" });
   const [msg, setMsg] = useState("");
@@ -33,11 +40,16 @@ export default function SettingsPage() {
 
   useEffect(() => {
     Promise.all([
-      api<{ site: SiteConfig; aiConfigured: boolean }>("/api/settings"),
+      api<{
+        site: SiteConfig;
+        aiConfigured: boolean;
+        imageBed: { type: "local" | "custom"; apiUrl: string; tokenConfigured: boolean };
+      }>("/api/settings"),
       api<{ content: string }>("/api/about"),
     ])
       .then(([s, a]) => {
         setSite(s.site);
+        setBedForm({ type: s.imageBed.type, apiUrl: s.imageBed.apiUrl, token: "", tokenConfigured: s.imageBed.tokenConfigured });
         setAboutContent(a.content);
       })
       .catch((e) => setErr(e instanceof Error ? e.message : "加载失败"));
@@ -67,6 +79,36 @@ export default function SettingsPage() {
     try {
       await api("/api/settings", { method: "PUT", body: JSON.stringify({ secrets: { ai: aiForm } }) });
       flash("AI 配置已保存 ✓（三项都填才会显示助理）");
+    } catch (e) {
+      setErr(e instanceof Error ? e.message : "保存失败");
+    } finally {
+      setSaving(false);
+    }
+  }
+
+  async function saveTavily() {
+    setSaving(true);
+    try {
+      await api("/api/settings", { method: "PUT", body: JSON.stringify({ secrets: { tavily: { apiKey: tavilyKey } } }) });
+      flash("Tavily 配置已保存 ✓");
+    } catch (e) {
+      setErr(e instanceof Error ? e.message : "保存失败");
+    } finally {
+      setSaving(false);
+    }
+  }
+
+  async function saveImageBed() {
+    setSaving(true);
+    try {
+      const secrets: { imageBed: Record<string, string> } = {
+        imageBed: { type: bedForm.type, apiUrl: bedForm.apiUrl.trim() },
+      };
+      // token 留空表示沿用旧值，避免每次都要重填
+      if (bedForm.token.trim()) secrets.imageBed.token = bedForm.token.trim();
+      await api("/api/settings", { method: "PUT", body: JSON.stringify({ secrets }) });
+      setBedForm((b) => ({ ...b, token: "", tokenConfigured: b.tokenConfigured || Boolean(bedForm.token.trim()) }));
+      flash("图床配置已保存 ✓");
     } catch (e) {
       setErr(e instanceof Error ? e.message : "保存失败");
     } finally {
@@ -209,7 +251,7 @@ export default function SettingsPage() {
             />
           </label>
           <label className="text-xs text-slate-400">
-            侧栏广告位（HTML/iframe 片段）
+            侧栏广告位（HTML/JS 片段，脚本会被真实执行）
             <textarea
               value={site.ads.sidebar}
               onChange={(e) => patch({ ads: { ...site.ads, sidebar: e.target.value } })}
@@ -219,13 +261,157 @@ export default function SettingsPage() {
             />
           </label>
           <label className="text-xs text-slate-400">
-            文章底部广告位（HTML/iframe 片段；纯 JS 脚本建议用联盟提供的 iframe 版）
+            文章底部广告位（HTML/JS 片段，AdSense/百度联盟代码可直接粘贴）
             <textarea
               value={site.ads.inArticle}
               onChange={(e) => patch({ ads: { ...site.ads, inArticle: e.target.value } })}
               rows={2}
               className={cx(inputCls, "mt-1 resize-y font-mono")}
             />
+          </label>
+        </Card>
+
+        <Card title="邮件订阅" desc="前台首页侧栏与「每日选刊」页的订阅卡片；邮箱存本地 data/，不进 git">
+          <label className="flex cursor-pointer items-center gap-2 text-sm text-slate-600 dark:text-slate-300">
+            <input
+              type="checkbox"
+              checked={site.subscribe.enabled}
+              onChange={(e) => patch({ subscribe: { ...site.subscribe, enabled: e.target.checked } })}
+              className="h-4 w-4 accent-indigo-500"
+            />
+            开启订阅入口
+          </label>
+          <div className="grid gap-3 sm:grid-cols-2">
+            <label className="text-xs text-slate-400">
+              卡片标题
+              <input
+                value={site.subscribe.title}
+                onChange={(e) => patch({ subscribe: { ...site.subscribe, title: e.target.value } })}
+                className={cx(inputCls, "mt-1")}
+              />
+            </label>
+            <label className="text-xs text-slate-400">
+              说明文字
+              <input
+                value={site.subscribe.note}
+                onChange={(e) => patch({ subscribe: { ...site.subscribe, note: e.target.value } })}
+                className={cx(inputCls, "mt-1")}
+              />
+            </label>
+          </div>
+        </Card>
+
+        <Card
+          title="评论系统"
+          desc="基于 GitHub Discussions 的 giscus，零后端。到 giscus.app 按提示生成配置，把 repo / repoId / categoryId 抄过来即可"
+        >
+          <label className="text-xs text-slate-400">
+            提供方
+            <select
+              value={site.comments.provider}
+              onChange={(e) =>
+                patch({ comments: { ...site.comments, provider: e.target.value as SiteConfig["comments"]["provider"] } })
+              }
+              className={cx(inputCls, "mt-1")}
+            >
+              <option value="none">关闭评论</option>
+              <option value="giscus">giscus（GitHub Discussions）</option>
+            </select>
+          </label>
+          <div className="grid gap-3 sm:grid-cols-2">
+            <label className="text-xs text-slate-400">
+              仓库（owner/repo）
+              <input
+                value={site.comments.giscus.repo}
+                onChange={(e) =>
+                  patch({ comments: { ...site.comments, giscus: { ...site.comments.giscus, repo: e.target.value } } })
+                }
+                placeholder="yourname/blog-comments"
+                className={cx(inputCls, "mt-1")}
+              />
+            </label>
+            <label className="text-xs text-slate-400">
+              仓库 ID（repoId）
+              <input
+                value={site.comments.giscus.repoId}
+                onChange={(e) =>
+                  patch({ comments: { ...site.comments, giscus: { ...site.comments.giscus, repoId: e.target.value } } })
+                }
+                placeholder="R_kgDO…"
+                className={cx(inputCls, "mt-1 font-mono")}
+              />
+            </label>
+            <label className="text-xs text-slate-400">
+              分类名（可选）
+              <input
+                value={site.comments.giscus.category}
+                onChange={(e) =>
+                  patch({ comments: { ...site.comments, giscus: { ...site.comments.giscus, category: e.target.value } } })
+                }
+                placeholder="Announcements"
+                className={cx(inputCls, "mt-1")}
+              />
+            </label>
+            <label className="text-xs text-slate-400">
+              分类 ID（categoryId）
+              <input
+                value={site.comments.giscus.categoryId}
+                onChange={(e) =>
+                  patch({
+                    comments: { ...site.comments, giscus: { ...site.comments.giscus, categoryId: e.target.value } },
+                  })
+                }
+                placeholder="DIC_kwDO…"
+                className={cx(inputCls, "mt-1 font-mono")}
+              />
+            </label>
+            <label className="text-xs text-slate-400">
+              文章映射方式
+              <select
+                value={site.comments.giscus.mapping}
+                onChange={(e) =>
+                  patch({ comments: { ...site.comments, giscus: { ...site.comments.giscus, mapping: e.target.value } } })
+                }
+                className={cx(inputCls, "mt-1")}
+              >
+                <option value="pathname">按路径（推荐）</option>
+                <option value="title">按标题</option>
+                <option value="og:title">按 og:title</option>
+                <option value="url">按完整 URL</option>
+              </select>
+            </label>
+            <label className="text-xs text-slate-400">
+              评论框位置
+              <select
+                value={site.comments.giscus.inputPosition}
+                onChange={(e) =>
+                  patch({
+                    comments: {
+                      ...site.comments,
+                      giscus: {
+                        ...site.comments.giscus,
+                        inputPosition: e.target.value as "top" | "bottom",
+                      },
+                    },
+                  })
+                }
+                className={cx(inputCls, "mt-1")}
+              >
+                <option value="top">顶部</option>
+                <option value="bottom">底部</option>
+              </select>
+            </label>
+          </div>
+          <label className="flex cursor-pointer items-center gap-2 text-sm text-slate-600 dark:text-slate-300">
+            <input
+              type="checkbox"
+              checked={site.comments.giscus.reactions}
+              onChange={(e) =>
+                patch({ comments: { ...site.comments, giscus: { ...site.comments.giscus, reactions: e.target.checked } } })
+              }
+              className="h-4 w-4 accent-indigo-500"
+            />
+            允许表情表态
           </label>
         </Card>
 
@@ -305,7 +491,7 @@ export default function SettingsPage() {
           </div>
         </Card>
 
-        <Card title="AI 猫猫助理" desc="填任意 OpenAI 兼容接口（智谱/通义/DeepSeek/自建中转均可）。三项都填并勾选启用后，前台出现助理。线上部署时也可以用 Vercel 环境变量 AI_BASE_URL / AI_API_KEY / AI_MODEL 替代">
+        <Card title="AI 猫猫助理" desc="填任意 OpenAI 兼容接口（智谱/通义/DeepSeek/自建中转均可）。三项都填并勾选启用后，前台出现助理。线上（服务器）也可以用环境变量 AI_BASE_URL / AI_API_KEY / AI_MODEL 替代">
           <label className="flex cursor-pointer items-center gap-2 text-sm text-slate-600 dark:text-slate-300">
             <input
               type="checkbox"
@@ -344,6 +530,75 @@ export default function SettingsPage() {
           <div className="flex gap-2">
             <button onClick={saveAi} disabled={saving} className="rounded-xl bg-cyan-500/15 px-4 py-2 text-sm font-semibold text-cyan-600 transition hover:bg-cyan-500/25 disabled:opacity-50 dark:text-cyan-300">
               保存 AI 配置
+            </button>
+          </div>
+        </Card>
+
+        <Card title="每日选刊素材源" desc="后台「每日选刊」生成时的新闻素材源。arXiv 论文默认就有，无需配置；AI 汇总借用上面的 AI 配置">
+          <label className="text-xs text-slate-400">
+            Tavily API Key（可选；留空则选刊只有论文板块。保存在本地 secrets，不进 git、不回传显示）
+            <input
+              type="password"
+              value={tavilyKey}
+              onChange={(e) => setTavilyKey(e.target.value)}
+              placeholder="tvly-…"
+              className={cx(inputCls, "mt-1")}
+            />
+          </label>
+          <div className="flex gap-2">
+            <button onClick={saveTavily} disabled={saving} className="rounded-xl bg-cyan-500/15 px-4 py-2 text-sm font-semibold text-cyan-600 transition hover:bg-cyan-500/25 disabled:opacity-50 dark:text-cyan-300">
+              保存 Tavily 配置
+            </button>
+          </div>
+        </Card>
+
+        <Card
+          title="图床"
+          desc="默认存本地 public/uploads（随 git 提交）。切到外部图床后，上传会压缩成 webp 再转发：POST multipart（文件字段 file），可选 Bearer Token，响应 JSON 里需带图片 url"
+        >
+          <div className="grid gap-3 sm:grid-cols-3">
+            <label className="text-xs text-slate-400">
+              存储方式
+              <select
+                value={bedForm.type}
+                onChange={(e) => setBedForm({ ...bedForm, type: e.target.value as "local" | "custom" })}
+                className={cx(inputCls, "mt-1")}
+              >
+                <option value="local">本地（public/uploads）</option>
+                <option value="custom">外部图床</option>
+              </select>
+            </label>
+            {bedForm.type === "custom" ? (
+              <>
+                <label className="text-xs text-slate-400 sm:col-span-2">
+                  图床接口地址
+                  <input
+                    value={bedForm.apiUrl}
+                    onChange={(e) => setBedForm({ ...bedForm, apiUrl: e.target.value })}
+                    placeholder="https://your-bed.example.com/api/upload"
+                    className={cx(inputCls, "mt-1")}
+                  />
+                </label>
+                <label className="text-xs text-slate-400 sm:col-span-2">
+                  Token（可选；{bedForm.tokenConfigured ? "已配置，留空沿用旧值" : "未配置"}）
+                  <input
+                    type="password"
+                    value={bedForm.token}
+                    onChange={(e) => setBedForm({ ...bedForm, token: e.target.value })}
+                    placeholder={bedForm.tokenConfigured ? "留空则沿用已保存的 token" : "Bearer token"}
+                    className={cx(inputCls, "mt-1")}
+                  />
+                </label>
+              </>
+            ) : null}
+          </div>
+          <div className="flex gap-2">
+            <button
+              onClick={saveImageBed}
+              disabled={saving || (bedForm.type === "custom" && !bedForm.apiUrl.trim())}
+              className="rounded-xl bg-cyan-500/15 px-4 py-2 text-sm font-semibold text-cyan-600 transition hover:bg-cyan-500/25 disabled:opacity-50 dark:text-cyan-300"
+            >
+              保存图床配置
             </button>
           </div>
         </Card>

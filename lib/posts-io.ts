@@ -1,4 +1,4 @@
-// 内容写入层：后台保存/删除文章与说说。读取层在 lib/content.ts。
+// 内容写入层：后台保存/删除文章、说说与每日选刊。读取层在 lib/content.ts。
 import fs from "node:fs";
 import path from "node:path";
 import matter from "gray-matter";
@@ -13,6 +13,7 @@ export interface PostPayload {
   date: string;
   tags: string[];
   draft: boolean;
+  pinned?: boolean; // 省略视为不置顶（兼容旧客户端）
   summary: string;
   cover?: string;
   content: string;
@@ -24,6 +25,10 @@ function postDir(): string {
 
 function momentsDir(): string {
   return path.join(getRoot(), "content", "moments");
+}
+
+function digestsDir(): string {
+  return path.join(getRoot(), "content", "digests");
 }
 
 function serialize(meta: Record<string, unknown>, content: string): string {
@@ -42,6 +47,7 @@ export function savePost(payload: PostPayload): { slug: string } {
     draft: payload.draft,
     summary: payload.summary,
   };
+  if (payload.pinned) meta.pinned = true;
   if (payload.cover) meta.cover = payload.cover;
 
   fs.mkdirSync(postDir(), { recursive: true });
@@ -87,4 +93,34 @@ export function saveAbout(content: string): void {
   const dir = path.join(getRoot(), "content");
   fs.mkdirSync(dir, { recursive: true });
   fs.writeFileSync(path.join(dir, "about.md"), content, "utf8");
+}
+
+// ---------- 每日选刊 ----------
+
+export interface DigestPayload {
+  slug: string; // 可为空串，自动按日期生成 digest-YYYY-MM-DD
+  title: string;
+  date: string;
+  draft: boolean;
+  content: string;
+}
+
+export function saveDigest(payload: DigestPayload): { slug: string } {
+  const slug = sanitizeSlug(payload.slug || `digest-${payload.date}`);
+  if (!isSafeSlug(slug)) throw new Error("文件名不合法");
+  if (!payload.title.trim()) throw new Error("选刊标题不能为空");
+  if (!payload.content.trim()) throw new Error("选刊正文不能为空");
+
+  const meta = { title: payload.title.trim(), date: payload.date, draft: payload.draft };
+  fs.mkdirSync(digestsDir(), { recursive: true });
+  fs.writeFileSync(path.join(digestsDir(), `${slug}.md`), serialize(meta, payload.content), "utf8");
+  return { slug };
+}
+
+export function deleteDigest(slug: string): boolean {
+  if (!isSafeSlug(slug)) return false;
+  const full = path.join(digestsDir(), `${slug}.md`);
+  if (!fs.existsSync(full)) return false;
+  fs.rmSync(full);
+  return true;
 }

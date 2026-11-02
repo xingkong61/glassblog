@@ -22,6 +22,7 @@ function EditorInner() {
   const [summary, setSummary] = useState("");
   const [cover, setCover] = useState("");
   const [draft, setDraft] = useState(false);
+  const [pinned, setPinned] = useState(false);
   const [content, setContent] = useState("");
   const [preview, setPreview] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -43,6 +44,7 @@ function EditorInner() {
         setSummary(post.summary);
         setCover(post.cover ?? "");
         setDraft(post.draft);
+        setPinned(post.pinned);
         setContent(post.content);
       })
       .catch((err) => setError(err instanceof Error ? err.message : "加载文章失败"));
@@ -61,6 +63,7 @@ function EditorInner() {
         date,
         tags: tagsStr.split(/[,，]/).map((t) => t.trim()).filter(Boolean),
         draft: asDraft,
+        pinned,
         summary,
         cover: cover || undefined,
         content,
@@ -196,6 +199,15 @@ function EditorInner() {
               {uploading ? "上传中…" : "上传封面图（可选）"}
             </button>
           )}
+          <label className="ml-auto flex cursor-pointer items-center gap-2 text-xs text-slate-500 dark:text-slate-400">
+            <input
+              type="checkbox"
+              checked={pinned}
+              onChange={(e) => setPinned(e.target.checked)}
+              className="h-4 w-4 accent-indigo-500"
+            />
+            📌 置顶到列表最前
+          </label>
         </div>
       </div>
 

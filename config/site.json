@@ -1,10 +1,10 @@
 {
   "siteName": "玻璃小栈",
-  "siteUrl": "",
+  "siteUrl": "https://www.xingkongly.top",
   "subtitle": "一块会发光的毛玻璃",
   "description": "记录技术、生活与灵感的个人博客",
   "author": "博主",
-  "avatar": "/avatar.svg",
+  "avatar": "/avatar.png",
   "social": {
     "github": "",
     "bilibili": "",
@@ -28,5 +28,22 @@
   "ads": {
     "inArticle": "",
     "sidebar": ""
+  },
+  "subscribe": {
+    "enabled": true,
+    "title": "订阅更新",
+    "note": "新文章与每日选刊，直接发到你的邮箱。随时可退订。"
+  },
+  "comments": {
+    "provider": "none",
+    "giscus": {
+      "repo": "",
+      "repoId": "",
+      "category": "",
+      "categoryId": "",
+      "mapping": "pathname",
+      "reactions": true,
+      "inputPosition": "top"
+    }
   }
 }
