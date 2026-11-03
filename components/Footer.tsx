@@ -6,7 +6,7 @@ export default function Footer() {
   const year = new Date().getFullYear();
   return (
     <footer className="px-4 pb-8 sm:px-6">
-      <div className="mx-auto max-w-6xl border-t border-slate-200/50 py-6 text-center text-xs text-slate-500 dark:border-white/10 dark:text-slate-400">
+      <div className="site-footer mx-auto max-w-6xl border-t border-slate-200/50 py-6 text-center text-xs text-slate-500 dark:border-white/10 dark:text-slate-400">
         <div>
           © {year} {site.author}
           {site.footerText ? ` · ${site.footerText}` : null}

@@ -5,10 +5,11 @@ import BackToTop from "./BackToTop";
 import CustomCursor from "./CustomCursor";
 import ReadingProgress from "./ReadingProgress";
 import Sakura from "./Sakura";
+import SiteBackground from "./SiteBackground";
 import StarField from "./StarField";
 
 // 站点氛围层：后台不挂载，避免影响写作界面
-export default function SiteEffects() {
+export default function SiteEffects({ heroImage }: { heroImage: string }) {
   const pathname = usePathname();
   if (pathname?.startsWith("/admin")) return null;
 
@@ -16,6 +17,7 @@ export default function SiteEffects() {
 
   return (
     <>
+      <SiteBackground image={heroImage} />
       <StarField />
       <Sakura />
       <CustomCursor />

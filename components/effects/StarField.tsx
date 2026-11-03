@@ -51,24 +51,20 @@ export default function StarField() {
       seed();
     };
 
-    const isDark = () => document.documentElement.classList.contains("dark");
-
     const render = (t: number) => {
       ctx.clearRect(0, 0, w, h);
-      if (isDark()) {
-        for (const s of stars) {
-          const twinkle = reduce ? 0 : Math.sin(t * 0.0015 + s.phase) * 0.16;
-          const alpha = Math.max(0.05, Math.min(0.9, s.alpha + twinkle));
-          ctx.beginPath();
-          ctx.fillStyle = `rgba(185, 205, 255, ${alpha})`;
-          ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
-          ctx.fill();
-          if (!reduce) {
-            s.y -= s.speed;
-            if (s.y < -4) {
-              s.y = h + 4;
-              s.x = Math.random() * w;
-            }
+      for (const s of stars) {
+        const twinkle = reduce ? 0 : Math.sin(t * 0.0015 + s.phase) * 0.16;
+        const alpha = Math.max(0.05, Math.min(0.9, s.alpha + twinkle));
+        ctx.beginPath();
+        ctx.fillStyle = `rgba(185, 205, 255, ${alpha})`;
+        ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+        ctx.fill();
+        if (!reduce) {
+          s.y -= s.speed;
+          if (s.y < -4) {
+            s.y = h + 4;
+            s.x = Math.random() * w;
           }
         }
       }

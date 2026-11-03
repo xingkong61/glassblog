@@ -33,6 +33,7 @@ export default function SettingsPage() {
   const [err, setErr] = useState("");
   const [saving, setSaving] = useState(false);
   const avatarRef = useRef<HTMLInputElement>(null);
+  const heroRef = useRef<HTMLInputElement>(null);
 
   function patch(p: Partial<SiteConfig>) {
     setSite((s) => (s ? { ...s, ...p } : s));
@@ -151,6 +152,19 @@ export default function SettingsPage() {
     flash("头像已上传，记得点下方保存 ✓");
   }
 
+  async function uploadHero(file: File) {
+    const form = new FormData();
+    form.append("file", file);
+    const res = await fetch("/api/upload", { method: "POST", body: form });
+    const data = (await res.json()) as { url?: string; error?: string };
+    if (!res.ok || !data.url) {
+      setErr(data.error ?? "上传失败");
+      return;
+    }
+    patch({ heroImage: data.url });
+    flash("首页头图已上传，记得点下方保存 ✓");
+  }
+
   if (!site) {
     return <div className="glass p-8 text-center text-sm text-slate-400">加载设置…</div>;
   }
@@ -203,6 +217,53 @@ export default function SettingsPage() {
               }}
             />
           </div>
+
+          <div className="flex flex-wrap items-center gap-3">
+            <span className="text-xs text-slate-400">首页头图</span>
+            {site.heroImage ? (
+              <>
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={site.heroImage}
+                  alt="首页头图"
+                  className="h-12 w-24 rounded-lg border border-white/60 object-cover"
+                />
+                <button
+                  onClick={() => heroRef.current?.click()}
+                  className="rounded-xl bg-white/60 px-3 py-1.5 text-xs text-slate-500 transition hover:bg-white dark:bg-white/10 dark:text-slate-300"
+                >
+                  换一张
+                </button>
+                <button
+                  onClick={() => patch({ heroImage: "" })}
+                  className="text-xs text-rose-400 hover:underline"
+                >
+                  移除
+                </button>
+              </>
+            ) : (
+              <button
+                onClick={() => heroRef.current?.click()}
+                className="rounded-xl bg-white/60 px-3 py-1.5 text-xs text-slate-500 transition hover:bg-white dark:bg-white/10 dark:text-slate-300"
+              >
+                上传首页头图
+              </button>
+            )}
+            <input
+              ref={heroRef}
+              type="file"
+              accept="image/*"
+              className="hidden"
+              onChange={(e) => {
+                const f = e.target.files?.[0];
+                if (f) uploadHero(f);
+                if (heroRef.current) heroRef.current.value = "";
+              }}
+            />
+          </div>
+          <p className="text-[11px] leading-relaxed text-slate-400">
+            建议 1920×1080 以上的横向图；留空则使用深空渐变 + 星点兜底。上传后需点底部「保存以上站点设置」。
+          </p>
         </Card>
 
         <Card title="社交链接" desc="留空的不会显示在首页名片">

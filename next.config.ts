@@ -1,6 +1,9 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  // dev 与 build 用不同的输出目录：避免「写作.bat」开着时执行 next build 覆盖 .next，
+  // 导致后台的 CSS/JS 全部 404（表现为后台样式丢失、编辑器打不开）
+  distDir: process.env.NODE_ENV === "development" ? ".next-dev" : ".next",
   // 不暴露 X-Powered-By，省一点响应头体积
   poweredByHeader: false,
   images: {

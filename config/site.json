@@ -1,10 +1,11 @@
 {
-  "siteName": "玻璃小栈",
+  "siteName": "星空的小站",
   "siteUrl": "https://xingkongly.top",
-  "subtitle": "一块会发光的毛玻璃",
+  "subtitle": "欢迎来到星空的小站",
   "description": "记录技术、生活与灵感的个人博客",
-  "author": "博主",
+  "author": "星空",
   "avatar": "/uploads/1793613863936-11ba70.webp",
+  "heroImage": "",
   "social": {
     "github": "",
     "bilibili": "",

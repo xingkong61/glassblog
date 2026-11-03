@@ -41,9 +41,7 @@ export async function generateMetadata(): Promise<Metadata> {
   };
 }
 
-// 主题防闪烁：首帧前根据 localStorage/系统偏好挂 .dark
-const themeScript = `(function(){try{var t=localStorage.getItem("gb-theme");if(t==="dark"||(!t&&window.matchMedia("(prefers-color-scheme: dark)").matches)){document.documentElement.classList.add("dark")}}catch(e){}})()`;
-
+// 固定黑夜主题：不再跟随系统或 localStorage，html 直接带 .dark
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -51,17 +49,14 @@ export default function RootLayout({
 }>) {
   const site = getSiteConfig();
   return (
-    <html lang="zh-CN" suppressHydrationWarning>
-      <head>
-        <script dangerouslySetInnerHTML={{ __html: themeScript }} />
-      </head>
+    <html lang="zh-CN" className="dark">
       <body className="antialiased" style={{ fontFamily: fontStack }}>
         <div className="aurora" aria-hidden>
           <span />
           <span />
           <span />
         </div>
-        <SiteEffects />
+        <SiteEffects heroImage={site.heroImage} />
         <Navbar siteName={site.siteName} showDigests={Boolean(getLatestDigest())} />
         <main className="mx-auto w-full max-w-6xl px-4 pb-16 pt-6 sm:px-6">{children}</main>
         <Footer />

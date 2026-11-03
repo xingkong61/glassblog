@@ -9,6 +9,7 @@ const site: SiteConfig = {
   description: "记录技术、生活与灵感的个人博客",
   author: "博主",
   avatar: "/avatar.png",
+  heroImage: "",
   social: { github: "", bilibili: "", email: "", xiaohongshu: "" },
   icp: "",
   footerText: "",

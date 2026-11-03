@@ -51,6 +51,7 @@ export interface SiteConfig {
   description: string;
   author: string;
   avatar: string;
+  heroImage: string; // 首页整屏头图，留空则用深空渐变兜底
   social: {
     github: string;
     bilibili: string;
